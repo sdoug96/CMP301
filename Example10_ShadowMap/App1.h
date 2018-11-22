@@ -27,12 +27,16 @@ protected:
 	void finalPass();
 	void gui();
 
+	void teapotDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
+	void cubeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
+	void sphereDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
+
 private:
 
 	//GUI editbale mesh and model positions
-	float cubeXPos = 3, cubeYPos = 1, cubeZPos = 1;
+	float cubeXPos = 5, cubeYPos = 1, cubeZPos = 1;
 
-	float modelXPos = 0.0f, modelYPos = 7.0f, modelZPos = 5.0f;
+	float modelXPos = -20, modelYPos = 7, modelZPos = 5;
 
 	float sphereXPos = 3, sphereYPos = 1, sphereZPos = 1;
 
@@ -53,21 +57,27 @@ private:
 	OrthoMesh* orthoMesh;
 	OrthoMesh* orthoMesh1;
 
+	//Models
+	Model* model;
+
 	//Lights
 	Light* light;
 	Light* light1;
-
-	//Models
-	Model* model;
+	Light* light2;
+	Light* light3;
 
 	//Shaders
 	ShadowShader* shadowShader;
 	DepthShader* depthShader;
 	TextureShader* textureShader;
 
-	//RenderTextures
+	//Shadow Maps
 	RenderTexture* shadowMap;
 	RenderTexture* shadowMap1;
+	RenderTexture* shadowMap2;
+	RenderTexture* shadowMap3;
+
+	bool drawShadowMap, drawShadowMap1;
 };
 
 #endif
