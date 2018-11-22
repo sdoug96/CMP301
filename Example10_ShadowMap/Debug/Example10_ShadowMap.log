@@ -1,0 +1,25 @@
+﻿  compilation object save succeeded; see D:\GraphicsCoursework\Example10_ShadowMap\depth_ps.cso
+  compilation object save succeeded; see D:\GraphicsCoursework\Example10_ShadowMap\depth_vs.cso
+D:\GraphicsCoursework\Example10_ShadowMap\shadow_ps.hlsl(61,12-63): warning X3206: 'calculateLighting': implicit truncation of vector type
+D:\GraphicsCoursework\Example10_ShadowMap\shadow_ps.hlsl(49,2): warning X4000: use of potentially uninitialized variable (shadowCalc)
+  
+  compilation object save succeeded; see D:\GraphicsCoursework\Example10_ShadowMap\shadow_ps.cso
+  compilation object save succeeded; see D:\GraphicsCoursework\Example10_ShadowMap\shadow_vs.cso
+  compilation object save succeeded; see D:\GraphicsCoursework\Example10_ShadowMap\texture_ps.cso
+  compilation object save succeeded; see D:\GraphicsCoursework\Example10_ShadowMap\texture_vs.cso
+  App1.cpp
+d:\graphicscoursework\example10_shadowmap\app1.h(46): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\graphicscoursework\example10_shadowmap\app1.cpp(20): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+d:\graphicscoursework\example10_shadowmap\app1.cpp(21): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+d:\graphicscoursework\example10_shadowmap\app1.cpp(45): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\graphicscoursework\example10_shadowmap\app1.cpp(50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  DepthShader.cpp
+  Main.cpp
+d:\graphicscoursework\example10_shadowmap\app1.h(46): warning C4305: 'initializing': truncation from 'double' to 'float'
+  ShadowShader.cpp
+  TextureShader.cpp
+  Generating Code...
+DXFramework.lib(WICTextureLoader.obj) : warning LNK4099: PDB 'DirectXTK.pdb' was not found with 'DXFramework.lib(WICTextureLoader.obj)' or at 'D:\GraphicsCoursework\Debug\DirectXTK.pdb'; linking object as if no debug info
+DXFramework.lib(pch.obj) : warning LNK4099: PDB 'DirectXTK.pdb' was not found with 'DXFramework.lib(pch.obj)' or at 'D:\GraphicsCoursework\Debug\DirectXTK.pdb'; linking object as if no debug info
+DXFramework.lib(DDSTextureLoader.obj) : warning LNK4099: PDB 'DirectXTK.pdb' was not found with 'DXFramework.lib(DDSTextureLoader.obj)' or at 'D:\GraphicsCoursework\Debug\DirectXTK.pdb'; linking object as if no debug info
+  Example10_ShadowMap.vcxproj -> D:\GraphicsCoursework\Debug\Example10_ShadowMap.exe
