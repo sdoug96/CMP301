@@ -1,7 +1,5 @@
-﻿  App1.cpp
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.h(48): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(21): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(22): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(55): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+﻿C:\Users\scott\Documents\CMP301-Coursework\Example10_ShadowMap\shadow_ps.hlsl(65,12-63): warning X3206: 'calculateLighting': implicit truncation of vector type
+C:\Users\scott\Documents\CMP301-Coursework\Example10_ShadowMap\shadow_ps.hlsl(53,2): warning X4000: use of potentially uninitialized variable (shadowCalc)
+  
+  compilation object save succeeded; see C:\Users\scott\Documents\CMP301-Coursework\Example10_ShadowMap\shadow_ps.cso
   Example10_ShadowMap.vcxproj -> C:\Users\scott\Documents\CMP301-Coursework\Debug\Example10_ShadowMap.exe

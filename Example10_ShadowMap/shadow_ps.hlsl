@@ -2,15 +2,17 @@
 Texture2D shaderTexture : register(t0);
 Texture2D depthMapTexture : register(t1);
 Texture2D depthMapTexture1 : register(t2);
+Texture2D depthMapTexture2 : register(t3);
+Texture2D depthMapTexture3 : register(t4);
 
 SamplerState diffuseSampler  : register(s0);
 SamplerState shadowSampler : register(s1);
 
 cbuffer LightBuffer : register(b0)
 {
-	float4 ambient[2];
-	float4 diffuse[2];
-	float4 direction[2];
+	float4 ambient[4];
+	float4 diffuse[4];
+	float4 direction[4];
 };
 
 struct InputType
@@ -20,6 +22,8 @@ struct InputType
 	float3 normal : NORMAL;
     float4 lightViewPos : TEXCOORD1;
 	float4 lightViewPos1 : TEXCOORD2;
+	float4 lightViewPos2 : TEXCOORD3;
+	float4 lightViewPos3 : TEXCOORD4;
 };
 
 // Calculate lighting intensity based on direction and normal. Combine with light colour.
@@ -76,33 +80,19 @@ float4 main(InputType input) : SV_TARGET
 
 	float4 colour1 = shadowCalc(input.lightViewPos1, diffuse[1], direction[1], depthMapTexture1, input, textureColour);
 
-	//// Calculate the projected texture coordinates.
-	//float2 pTexCoord1 = input.lightViewPos1.xy / input.lightViewPos1.w;
-	//pTexCoord1 *= float2(0.5, -0.5);
-	//pTexCoord1 += float2(0.5f, 0.5f);
+	//LIGHT 3
 
-	//// Determine if the projected coordinates are in the 0 to 1 range.  If not don't do lighting.
-	//if (pTexCoord1.x < 0.f || pTexCoord1.x > 1.f || pTexCoord1.y < 0.f || pTexCoord1.y > 1.f)
-	//{
-	//	return textureColour;
-	//}
+	float4 colour2 = shadowCalc(input.lightViewPos2, diffuse[2], direction[2], depthMapTexture2, input, textureColour);
 
-	//// Sample the shadow map (get depth of geometry)
-	//depthValue1 = depthMapTexture1.Sample(shadowSampler, pTexCoord1).r;
+	//LIGHT 4
 
-	//// Calculate the depth from the light.
-	//lightDepthValue1 = input.lightViewPos1.z / input.lightViewPos1.w;
-	//lightDepthValue1 -= shadowMapBias;
-
-	//// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
-	//if (lightDepthValue1 < depthValue1)
-	//{
-	//	colour1 = calculateLighting(-direction[1], input.normal, diffuse[1]);
-	//}
+	float4 colour3 = shadowCalc(input.lightViewPos3, diffuse[3], direction[3], depthMapTexture3, input, textureColour);
     
 	//Add light colours to give proper effect
-	saturate(colour += colour1);
 
-    colour = saturate(colour + ambient[0]);
+	colour += colour1;
+
+	colour += ambient[0];
+
     return saturate(colour * textureColour);
 }

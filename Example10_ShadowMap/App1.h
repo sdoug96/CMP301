@@ -20,16 +20,23 @@ public:
 
 protected:
 
+	void lightsInit();
 	void guiEdits();
 	bool render();
 	void depthPass();
 	void depthPass1();
+	void depthPass2();
+	void depthPass3();
 	void finalPass();
 	void gui();
 
 	void teapotDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 	void cubeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 	void sphereDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
+
+	void teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
+	void cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
+	void sphereFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
 private:
 
@@ -41,14 +48,25 @@ private:
 	float sphereXPos = 3, sphereYPos = 1, sphereZPos = 1;
 
 	//GUI editable light positions and directions
-	float lightXPos = -40.0f, lightYPos = 20.0f, lightZPos = 40.0f;
-	float lightXDir = 0.7f, lightYDir = -0.7f, lightZDir = 0.0f;
 
-	float light1XPos = 40.0f, light1YPos = 20.0f, light1ZPos = 40.0f;
-	float light1XDir = -0.7f, light1YDir = -0.7, light1ZDir = 0.0f;
+	//Top left light
+	float lightXPos = -40.0f, lightYPos = 10.0f, lightZPos = 75.0f;
+	float lightXDir = 0.7f, lightYDir = -0.7f, lightZDir = -0.7f;
+
+	//Bottom right light
+	float light1XPos = 40.0f, light1YPos = 10.0f, light1ZPos = -5.0f;
+	float light1XDir = -0.7f, light1YDir = -0.7f, light1ZDir = 0.7f;
+
+	//Bottom left light
+	float light2XPos = -40.0f, light2YPos = 10.0f, light2ZPos = -5.0f;
+	float light2XDir = 0.7f, light2YDir = -0.7f, light2ZDir = 0.7f;
+
+	//Top right light
+	float light3XPos = 40.0f, light3YPos = 10.0f, light3ZPos = 75.0f;
+	float light3XDir = -0.7f, light3YDir = -0.7f, light3ZDir = -0.7f;
 
 	//Light Directions
-	XMFLOAT4 lightDir, light1Dir;
+	XMFLOAT4 lightDir, light1Dir, light2Dir, light3Dir;
 
 	//Mesh objects
 	PlaneMesh* mesh;
@@ -56,6 +74,8 @@ private:
 	SphereMesh* sphereMesh;
 	OrthoMesh* orthoMesh;
 	OrthoMesh* orthoMesh1;
+	OrthoMesh* orthoMesh2;
+	OrthoMesh* orthoMesh3;
 
 	//Models
 	Model* model;
