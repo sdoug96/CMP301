@@ -90,9 +90,9 @@ float4 main(InputType input) : SV_TARGET
     
 	//Add light colours to give proper effect
 
-	colour += colour1;
+	colour = colour + colour1 + colour2 + colour3;
 
 	colour += ambient[0];
 
-    return saturate(colour * textureColour);
+    return colour * textureColour;
 }

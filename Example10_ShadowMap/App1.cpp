@@ -82,7 +82,7 @@ void App1::lightsInit()
 
 	light3 = new Light;
 	light3->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-	light3->setDiffuseColour(1.0f, 0.0f, 0.0f, 1.0f);
+	light3->setDiffuseColour(1.0f, 1.0f, 0.0f, 1.0f);
 	light3->generateOrthoMatrix(sceneWidth, sceneHeight, 0.1f, 100.f);
 
 	lightDir.x = lightXDir;
