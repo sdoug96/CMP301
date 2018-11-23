@@ -371,13 +371,19 @@ void App1::finalPass()
 		textureShader->render(renderer->getDeviceContext(), orthoMesh1->getIndexCount());
 	}
 
-	orthoMesh2->sendData(renderer->getDeviceContext());
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, shadowMap2->getShaderResourceView());
-	textureShader->render(renderer->getDeviceContext(), orthoMesh2->getIndexCount());
+	if (drawShadowMap2)
+	{
+		orthoMesh2->sendData(renderer->getDeviceContext());
+		textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, shadowMap2->getShaderResourceView());
+		textureShader->render(renderer->getDeviceContext(), orthoMesh2->getIndexCount());
+	}
 
-	orthoMesh3->sendData(renderer->getDeviceContext());
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, shadowMap3->getShaderResourceView());
-	textureShader->render(renderer->getDeviceContext(), orthoMesh3->getIndexCount());
+	if (drawShadowMap3)
+	{
+		orthoMesh3->sendData(renderer->getDeviceContext());
+		textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, shadowMap3->getShaderResourceView());
+		textureShader->render(renderer->getDeviceContext(), orthoMesh3->getIndexCount());
+	}
 
 	renderer->setZBuffer(true);
 
@@ -597,6 +603,8 @@ void App1::gui()
 	{
 		ImGui::Checkbox("Render First Shadow Map", &drawShadowMap); 
 		ImGui::Checkbox("Render Second Shadow Map", &drawShadowMap1);
+		ImGui::Checkbox("Render Third Shadow Map", &drawShadowMap2);
+		ImGui::Checkbox("Render Fourth Shadow Map", &drawShadowMap3);
 	}
 
 	//ImGui::ShowDemoWindow();

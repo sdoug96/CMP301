@@ -97,7 +97,7 @@ private:
 	RenderTexture* shadowMap2;
 	RenderTexture* shadowMap3;
 
-	bool drawShadowMap, drawShadowMap1;
+	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3;
 };
 
 #endif
