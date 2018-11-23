@@ -34,6 +34,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
 	depthShader = new DepthShader(renderer->getDevice(), hwnd);
 	shadowShader = new ShadowShader(renderer->getDevice(), hwnd);
+	rippleShader = new RippleShader(renderer->getDevice(), hwnd);
 
 	//Shadow map values
 	int shadowmapWidth = 2048;
@@ -144,6 +145,8 @@ bool App1::frame()
 
 bool App1::render()
 {
+	time += timer->getTime();
+
 	//Update GUI editable values
 	guiEdits();
 	// Perform depth pass
@@ -334,8 +337,8 @@ void App1::finalPass()
 
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("brick"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
-	shadowShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+	rippleShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("brick"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, time);
+	rippleShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 	//TEAPOT
 

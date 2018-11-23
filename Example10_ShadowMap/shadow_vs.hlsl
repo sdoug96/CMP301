@@ -16,6 +16,12 @@ cbuffer MatrixBuffer : register(b0)
 	matrix lightProjectionMatrix3;
 };
 
+cbuffer TimeBuffer : register(b1)
+{
+	float time;
+	float3 padding;
+};
+
 struct InputType
 {
     float4 position : POSITION;

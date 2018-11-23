@@ -87,7 +87,6 @@ void ShadowShader::initShader(WCHAR* vsFilename, WCHAR* psFilename)
 	lightBufferDesc.MiscFlags = 0;
 	lightBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&lightBufferDesc, NULL, &lightBuffer);
-
 }
 
 void ShadowShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* heightMap, ID3D11ShaderResourceView*depthMap, ID3D11ShaderResourceView*depthMap1, ID3D11ShaderResourceView*depthMap2, ID3D11ShaderResourceView*depthMap3, Light* light, Light* light1, Light* light2, Light* light3, XMFLOAT4 lightDir, XMFLOAT4 light1Dir, XMFLOAT4 light2Dir, XMFLOAT4 light3Dir)

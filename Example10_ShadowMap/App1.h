@@ -7,6 +7,7 @@
 #include "TextureShader.h"
 #include "ShadowShader.h"
 #include "DepthShader.h"
+#include "RippleShader.h"
 
 class App1 : public BaseApplication
 {
@@ -37,6 +38,8 @@ protected:
 	void teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 	void cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 	void sphereFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
+
+	float time = 0;
 
 private:
 
@@ -90,6 +93,7 @@ private:
 	ShadowShader* shadowShader;
 	DepthShader* depthShader;
 	TextureShader* textureShader;
+	RippleShader* rippleShader;
 
 	//Shadow Maps
 	RenderTexture* shadowMap;
