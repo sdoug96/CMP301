@@ -37,8 +37,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	rippleShader = new RippleShader(renderer->getDevice(), hwnd);
 
 	//Shadow map values
-	int shadowmapWidth = 2048;
-	int shadowmapHeight = 2048;
+	int shadowmapWidth = 4096;
+	int shadowmapHeight = 4096;
 	int sceneWidth = 200;
 	int sceneHeight = 200;
 
@@ -337,7 +337,7 @@ void App1::finalPass()
 
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
-	rippleShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("brick"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, time);
+	rippleShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("brick"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, time, height, frequency, speed);
 	rippleShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 	//TEAPOT
@@ -559,9 +559,9 @@ void App1::gui()
 
 	if (ImGui::CollapsingHeader("Cube Values"))
 	{
-		ImGui::SliderFloat("Cube X Position: ", &cubeXPos, -20, 20, 0, 1);
-		ImGui::SliderFloat("Cube Y Position: ", &cubeYPos, 1, 20, 0, 1);
-		ImGui::SliderFloat("Cube Z Position: ", &cubeZPos, -5, 80, 0, 1);
+		ImGui::SliderFloat("Cube X Position: ", &cubeXPos, -9, 9, 0, 1);
+		ImGui::SliderFloat("Cube Y Position: ", &cubeYPos, 1, 5, 0, 1);
+		ImGui::SliderFloat("Cube Z Position: ", &cubeZPos, -1, 16, 0, 1);
 	}
 
 	//Model Stuff
@@ -573,31 +573,59 @@ void App1::gui()
 		ImGui::SliderFloat("Model Z Position: ", &modelZPos, -5, 80, 0, 1);
 	}
 
-	//Light Stuff
-
-	if (ImGui::CollapsingHeader("Light Values"))
-	{
-		ImGui::SliderFloat("Light X Position: ", &lightXPos, -40, 40, 0, 1);
-		ImGui::SliderFloat("Light Y Position: ", &lightYPos, 0, 20, 0, 1);
-		ImGui::SliderFloat("Light Z Position: ", &lightZPos, -80, 80, 0, 1);
-
-		ImGui::SliderFloat("Light X Direction: ", &lightXDir, -1, 1, 0, 1);
-		ImGui::SliderFloat("Light Y Direction: ", &lightYDir, -1, 1, 0, 1);
-		ImGui::SliderFloat("Light Z Direction: ", &lightZDir, -1, 1, 0, 1);
-	}
-
 	//Light 1 Stuff
 
 	if (ImGui::CollapsingHeader("Light 1 Values"))
 	{
+		ImGui::SliderFloat("Light 1 X Position: ", &lightXPos, -20, 20, 0, 1);
+		ImGui::SliderFloat("Light 1 Y Position: ", &lightYPos, lightHeightDownLimit, lightHeightUpLimit, 0, 1);
+		ImGui::SliderFloat("Light 1 Z Position: ", &lightZPos, -80, 80, 0, 1);
 
-		ImGui::SliderFloat("Light 1 X Position: ", &light1XPos, -40, 40, 0, 1);
-		ImGui::SliderFloat("Light 1 Y Position: ", &light1YPos, 0, 20, 0, 1);
-		ImGui::SliderFloat("Light 1 Z Position: ", &light1ZPos, -80, 80, 0, 1);
+		ImGui::SliderFloat("Light 1 X Direction: ", &lightXDir, -1, 1, 0, 1);
+		ImGui::SliderFloat("Light 1 Y Direction: ", &lightYDir, -1, 1, 0, 1);
+		ImGui::SliderFloat("Light 1 Z Direction: ", &lightZDir, -1, 1, 0, 1);
+	}
 
-		ImGui::SliderFloat("Light 1 X Direction: ", &light1XDir, -1, 1, 0, 1);
-		ImGui::SliderFloat("Light 1 Y Direction: ", &light1YDir, -1, 1, 0, 1);
-		ImGui::SliderFloat("Light 1 Z Direction: ", &light1ZDir, -1, 1, 0, 1);
+	//Light 2 Stuff
+
+	if (ImGui::CollapsingHeader("Light 2 Values"))
+	{
+
+		ImGui::SliderFloat("Light 2 X Position: ", &light1XPos, -20, 20, 0, 1);
+		ImGui::SliderFloat("Light 2 Y Position: ", &light1YPos, lightHeightDownLimit, lightHeightUpLimit, 0, 1);
+		ImGui::SliderFloat("Light 2 Z Position: ", &light1ZPos, -80, 80, 0, 1);
+
+		ImGui::SliderFloat("Light 2 X Direction: ", &light1XDir, -1, 1, 0, 1);
+		ImGui::SliderFloat("Light 2 Y Direction: ", &light1YDir, -1, 1, 0, 1);
+		ImGui::SliderFloat("Light 2 Z Direction: ", &light1ZDir, -1, 1, 0, 1);
+	}
+
+	//Light 3 Stuff
+
+	if (ImGui::CollapsingHeader("Light 3 Values"))
+	{
+
+		ImGui::SliderFloat("Light 3 X Position: ", &light2XPos, -20, 20, 0, 1);
+		ImGui::SliderFloat("Light 3 Y Position: ", &light2YPos, lightHeightDownLimit, lightHeightUpLimit, 0, 1);
+		ImGui::SliderFloat("Light 3 Z Position: ", &light2ZPos, -80, 80, 0, 1);
+
+		ImGui::SliderFloat("Light 3 X Direction: ", &light2XDir, -1, 1, 0, 1);
+		ImGui::SliderFloat("Light 3 Y Direction: ", &light2YDir, -1, 1, 0, 1);
+		ImGui::SliderFloat("Light 3 Z Direction: ", &light2ZDir, -1, 1, 0, 1);
+	}
+
+	//Light 4 Stuff
+
+	if (ImGui::CollapsingHeader("Light 4 Values"))
+	{
+
+		ImGui::SliderFloat("Light 4 X Position: ", &light3XPos, -20, 20, 0, 1);
+		ImGui::SliderFloat("Light 4 Y Position: ", &light3YPos, lightHeightDownLimit, lightHeightUpLimit, 0, 1);
+		ImGui::SliderFloat("Light 4 Z Position: ", &light3ZPos, -80, 80, 0, 1);
+
+		ImGui::SliderFloat("Light 4 X Direction: ", &light3XDir, -1, 1, 0, 1);
+		ImGui::SliderFloat("Light 4 Y Direction: ", &light3YDir, -1, 1, 0, 1);
+		ImGui::SliderFloat("Light 4 Z Direction: ", &light3ZDir, -1, 1, 0, 1);
 	}
 
 	//Shadow Maps
@@ -608,6 +636,13 @@ void App1::gui()
 		ImGui::Checkbox("Render Second Shadow Map", &drawShadowMap1);
 		ImGui::Checkbox("Render Third Shadow Map", &drawShadowMap2);
 		ImGui::Checkbox("Render Fourth Shadow Map", &drawShadowMap3);
+	}
+
+	if (ImGui::CollapsingHeader("Plane Ripple Values"))
+	{
+		ImGui::SliderFloat("Wave height: ", &height, 0, 1, 0, 1);
+		ImGui::SliderFloat("Wave frquency: ", &frequency, 0, 20, 0, 1);
+		ImGui::SliderFloat("Wave speed: ", &speed, 0, 5, 0, 1);
 	}
 
 	//ImGui::ShowDemoWindow();

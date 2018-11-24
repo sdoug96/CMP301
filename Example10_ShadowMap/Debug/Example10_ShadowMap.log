@@ -1,1 +1,2 @@
-﻿LINK : fatal error LNK1104: cannot open file 'C:\Users\scott\Documents\CMP301-Coursework\Debug\Example10_ShadowMap.exe'
+﻿  compilation object save succeeded; see C:\Users\scott\Documents\CMP301-Coursework\Example10_ShadowMap\ripple_vs.cso
+  Example10_ShadowMap.vcxproj -> C:\Users\scott\Documents\CMP301-Coursework\Debug\Example10_ShadowMap.exe

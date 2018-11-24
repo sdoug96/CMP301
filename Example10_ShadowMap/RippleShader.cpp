@@ -98,7 +98,7 @@ void RippleShader::initShader(WCHAR* vsFilename, WCHAR* psFilename)
 }
 
 
-void RippleShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* heightMap, ID3D11ShaderResourceView*depthMap, ID3D11ShaderResourceView*depthMap1, ID3D11ShaderResourceView*depthMap2, ID3D11ShaderResourceView*depthMap3, Light* light, Light* light1, Light* light2, Light* light3, XMFLOAT4 lightDir, XMFLOAT4 light1Dir, XMFLOAT4 light2Dir, XMFLOAT4 light3Dir, float time)
+void RippleShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* heightMap, ID3D11ShaderResourceView*depthMap, ID3D11ShaderResourceView*depthMap1, ID3D11ShaderResourceView*depthMap2, ID3D11ShaderResourceView*depthMap3, Light* light, Light* light1, Light* light2, Light* light3, XMFLOAT4 lightDir, XMFLOAT4 light1Dir, XMFLOAT4 light2Dir, XMFLOAT4 light3Dir, float time, float height, float frequency, float speed)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -172,9 +172,9 @@ void RippleShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const
 	deviceContext->Map(timeBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	timePtr = (TimeBufferType*)mappedResource.pData;
 	timePtr->time = time;
-	timePtr->padding.x = 0.0f;
-	timePtr->padding.y = 0.0f;
-	timePtr->padding.z = 0.0f;
+	timePtr->height = height;
+	timePtr->frequency = frequency;
+	timePtr->speed = speed;
 	deviceContext->Unmap(timeBuffer, 0);
 	deviceContext->VSSetConstantBuffers(1, 1, &timeBuffer);
 

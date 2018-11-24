@@ -35,7 +35,9 @@ private:
 	struct TimeBufferType
 	{
 		float time;
-		XMFLOAT3 padding;
+		float height;
+		float frequency;
+		float speed;
 	};
 
 public:
@@ -61,7 +63,10 @@ public:
 		XMFLOAT4 light1Dir,
 		XMFLOAT4 light2Dir,
 		XMFLOAT4 light3Dir,
-		float time
+		float time,
+		float height,
+		float frequency,
+		float speed
 	);
 
 private:

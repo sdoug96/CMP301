@@ -39,7 +39,7 @@ protected:
 	void cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 	void sphereFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
-	float time = 0;
+	float time = 0, height = 0, frequency = 0, speed = 0;
 
 private:
 
@@ -53,20 +53,23 @@ private:
 	//GUI editable light positions and directions
 
 	//Top left light
-	float lightXPos = -40.0f, lightYPos = 10.0f, lightZPos = 75.0f;
+	float lightXPos = -20.0f, lightYPos = 20.0f, lightZPos = 75.0f;
 	float lightXDir = 0.7f, lightYDir = -0.7f, lightZDir = -0.7f;
 
 	//Bottom right light
-	float light1XPos = 40.0f, light1YPos = 10.0f, light1ZPos = -5.0f;
+	float light1XPos = 20.0f, light1YPos = 20.0f, light1ZPos = -5.0f;
 	float light1XDir = -0.7f, light1YDir = -0.7f, light1ZDir = 0.7f;
 
 	//Bottom left light
-	float light2XPos = -40.0f, light2YPos = 10.0f, light2ZPos = -5.0f;
+	float light2XPos = -20.0f, light2YPos = 20.0f, light2ZPos = -5.0f;
 	float light2XDir = 0.7f, light2YDir = -0.7f, light2ZDir = 0.7f;
 
 	//Top right light
-	float light3XPos = 40.0f, light3YPos = 10.0f, light3ZPos = 75.0f;
+	float light3XPos = 20.0f, light3YPos = 20.0f, light3ZPos = 75.0f;
 	float light3XDir = -0.7f, light3YDir = -0.7f, light3ZDir = -0.7f;
+
+	float lightHeightDownLimit = 0;
+	float lightHeightUpLimit = 20;
 
 	//Light Directions
 	XMFLOAT4 lightDir, light1Dir, light2Dir, light3Dir;
