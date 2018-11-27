@@ -1,5 +1,3 @@
-// Lab1.cpp
-// Lab 1 example, simple coloured triangle mesh
 #include "App1.h"
 
 App1::App1()
@@ -173,7 +171,7 @@ bool App1::frame()
 	{
 		return false;
 	}
-	
+
 	//Render the graphics.
 	result = render();
 	if (!result)
@@ -392,7 +390,7 @@ void App1::finalPass()
 	//SPHERE
 
 	sphereFinalPass(viewMatrix, projectionMatrix);
-	
+
 	// RENDER THE RENDER TEXTURE SCENE
 	// Requires 2D rendering and an ortho mesh.
 	renderer->setZBuffer(false);
@@ -681,7 +679,7 @@ void App1::gui()
 
 	if (ImGui::CollapsingHeader("Shadow Maps"))
 	{
-		ImGui::Checkbox("Render First Shadow Map", &drawShadowMap); 
+		ImGui::Checkbox("Render First Shadow Map", &drawShadowMap);
 		ImGui::Checkbox("Render Second Shadow Map", &drawShadowMap1);
 		ImGui::Checkbox("Render Third Shadow Map", &drawShadowMap2);
 		ImGui::Checkbox("Render Fourth Shadow Map", &drawShadowMap3);
@@ -700,4 +698,3 @@ void App1::gui()
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
-

@@ -31,6 +31,9 @@ protected:
 	void depthPass1();
 	void depthPass2();
 	void depthPass3();
+	void shadowPass();
+	void verticalBlur();
+	void horizontalBlur();
 	void finalPass();
 	void gui();
 
@@ -110,6 +113,9 @@ private:
 	RenderTexture* shadowMap1;
 	RenderTexture* shadowMap2;
 	RenderTexture* shadowMap3;
+	RenderTexture* renderTexture;
+	RenderTexture* horizontalBlurTexture;
+	RenderTexture* verticalBlurTexture;
 
 	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3, lightswitch, light1switch, light2switch, light3switch;
 };
