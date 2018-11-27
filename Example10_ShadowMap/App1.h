@@ -8,6 +8,9 @@
 #include "ShadowShader.h"
 #include "DepthShader.h"
 #include "RippleShader.h"
+#include "SoftShadowShader.h"
+#include "HorizontalBlurShader.h"
+#include "VerticalBlurShader.h"
 
 class App1 : public BaseApplication
 {
@@ -82,6 +85,7 @@ private:
 	OrthoMesh* orthoMesh1;
 	OrthoMesh* orthoMesh2;
 	OrthoMesh* orthoMesh3;
+	OrthoMesh* softShadowOrtho;
 
 	//Models
 	Model* model;
@@ -94,9 +98,12 @@ private:
 
 	//Shaders
 	ShadowShader* shadowShader;
+	SoftShadowShader* softShadowShader;
 	DepthShader* depthShader;
 	TextureShader* textureShader;
 	RippleShader* rippleShader;
+	HorizontalBlurShader* horizontalBlurShader;
+	VerticalBlurShader* verticalBlurShader;
 
 	//Shadow Maps
 	RenderTexture* shadowMap;
@@ -104,7 +111,7 @@ private:
 	RenderTexture* shadowMap2;
 	RenderTexture* shadowMap3;
 
-	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3;
+	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3, lightswitch, light1switch, light2switch, light3switch;
 };
 
 #endif

@@ -1,2 +1,10 @@
-﻿  compilation object save succeeded; see C:\Users\scott\Documents\CMP301-Coursework\Example10_ShadowMap\ripple_vs.cso
-  Example10_ShadowMap.vcxproj -> C:\Users\scott\Documents\CMP301-Coursework\Debug\Example10_ShadowMap.exe
+﻿  App1.cpp
+e:\cmp301-coursework\example10_shadowmap\app1.cpp(21): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+e:\cmp301-coursework\example10_shadowmap\app1.cpp(22): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+e:\cmp301-coursework\example10_shadowmap\app1.cpp(23): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+e:\cmp301-coursework\example10_shadowmap\app1.cpp(24): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+e:\cmp301-coursework\example10_shadowmap\app1.cpp(71): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\cmp301-coursework\example10_shadowmap\app1.cpp(74): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\cmp301-coursework\example10_shadowmap\app1.cpp(77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\cmp301-coursework\example10_shadowmap\app1.cpp(80): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Example10_ShadowMap.vcxproj -> E:\CMP301-Coursework\Debug\Example10_ShadowMap.exe

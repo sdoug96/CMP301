@@ -22,6 +22,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	orthoMesh1 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, screenWidth / 2.7, screenHeight / 2.7);
 	orthoMesh2 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, -screenHeight / 2.7);
 	orthoMesh3 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, screenWidth / 2.7, -screenHeight / 2.7);
+	softShadowOrtho = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, screenHeight / 2.7);
 
 	model = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/teapot.obj");
 
@@ -34,7 +35,10 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
 	depthShader = new DepthShader(renderer->getDevice(), hwnd);
 	shadowShader = new ShadowShader(renderer->getDevice(), hwnd);
+	softShadowShader = new SoftShadowShader(renderer->getDevice(), hwnd);
 	rippleShader = new RippleShader(renderer->getDevice(), hwnd);
+	horizontalBlurShader = new HorizontalBlurShader(renderer->getDevice(), hwnd);
+	verticalBlurShader = new VerticalBlurShader(renderer->getDevice(), hwnd);
 
 	//Shadow map values
 	int shadowmapWidth = 4096;
@@ -66,24 +70,17 @@ void App1::lightsInit()
 	int sceneHeight = 200;
 
 	//Initialise lights
+
 	light = new Light;
-	light->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-	light->setDiffuseColour(0.0f, 0.0f, 1.0f, 1.0f);
 	light->generateOrthoMatrix(sceneWidth, sceneHeight, 0.1f, 100.f);
 
 	light1 = new Light;
-	light1->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-	light1->setDiffuseColour(1.0f, 0.0f, 0.0f, 1.0f);
 	light1->generateOrthoMatrix(sceneWidth, sceneHeight, 0.1f, 100.f);
 
 	light2 = new Light;
-	light2->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-	light2->setDiffuseColour(0.0f, 1.0f, 0.0f, 1.0f);
 	light2->generateOrthoMatrix(sceneWidth, sceneHeight, 0.1f, 100.f);
 
 	light3 = new Light;
-	light3->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-	light3->setDiffuseColour(1.0f, 1.0f, 0.0f, 1.0f);
 	light3->generateOrthoMatrix(sceneWidth, sceneHeight, 0.1f, 100.f);
 
 	lightDir.x = lightXDir;
@@ -121,6 +118,50 @@ void App1::guiEdits()
 
 	light3->setPosition(light3XPos, light3YPos, light3ZPos);
 	light3->setDirection(light3XDir, light3YDir, light3ZDir);
+
+	if (lightswitch)
+	{
+		light->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+		light->setDiffuseColour(0.0f, 0.0f, 1.0f, 1.0f);
+	}
+	else
+	{
+		light->setAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
+		light->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	if (light1switch)
+	{
+		light1->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+		light1->setDiffuseColour(1.0f, 0.0f, 0.0f, 1.0f);
+	}
+	else
+	{
+		light1->setAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
+		light1->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	if (light2switch)
+	{
+		light2->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+		light2->setDiffuseColour(0.0f, 1.0f, 0.0f, 1.0f);
+	}
+	else
+	{
+		light2->setAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
+		light2->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	if (light3switch)
+	{
+		light3->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+		light3->setDiffuseColour(1.0f, 1.0f, 0.0f, 1.0f);
+	}
+	else
+	{
+		light3->setAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
+		light3->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
+	}
 }
 
 bool App1::frame()
@@ -626,6 +667,14 @@ void App1::gui()
 		ImGui::SliderFloat("Light 4 X Direction: ", &light3XDir, -1, 1, 0, 1);
 		ImGui::SliderFloat("Light 4 Y Direction: ", &light3YDir, -1, 1, 0, 1);
 		ImGui::SliderFloat("Light 4 Z Direction: ", &light3ZDir, -1, 1, 0, 1);
+	}
+
+	if (ImGui::CollapsingHeader("Light Switches"))
+	{
+		ImGui::Checkbox("Light 1 Switch: ", &lightswitch);
+		ImGui::Checkbox("Light 2 Switch: ", &light1switch);
+		ImGui::Checkbox("Light 3 Switch: ", &light2switch);
+		ImGui::Checkbox("Light 4 Switch: ", &light3switch);
 	}
 
 	//Shadow Maps
