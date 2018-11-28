@@ -27,6 +27,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	textureMgr->loadTexture("brick", L"res/brick1.dds");
 	textureMgr->loadTexture("heightMap", L"res/heightMap.png");
 	textureMgr->loadTexture("rock", L"res/rock.png");
+	textureMgr->loadTexture("terrain", L"res/terrain.jpg");
+	textureMgr->loadTexture("bark", L"res/bark.jpg");
 
 	//Initialise shaders
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
@@ -397,8 +399,8 @@ void App1::finalPass()
 
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
-	rippleShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("brick"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, time, height, frequency, speed);
-	rippleShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("terrain"), textureMgr->getTexture("heightMap"), shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
+	shadowShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 	worldMatrix = renderer->getWorldMatrix();
 
@@ -476,7 +478,7 @@ void App1::teapotDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMat
 	//worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
 
 	//Scale teapot
-	XMMATRIX scaleMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);
+	XMMATRIX scaleMatrix = XMMatrixScaling(0.045, 0.045, 0.045);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 	// Render model
@@ -551,11 +553,11 @@ void App1::teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 	//worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
 
 	//Scale teapot
-	XMMATRIX scaleMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);
+	XMMATRIX scaleMatrix = XMMatrixScaling(0.045, 0.045, 0.045);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 	model->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("brick"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
 	shadowShader->render(renderer->getDeviceContext(), model->getIndexCount());
 }
 
@@ -605,7 +607,7 @@ void App1::sphereFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 
 	//Render sphere
 	sphereMesh->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("rock"), textureMgr->getTexture("heightMap"), shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("rock"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
 	shadowShader->render(renderer->getDeviceContext(), sphereMesh->getIndexCount());
 }
 
@@ -634,7 +636,7 @@ void App1::gui()
 	if (ImGui::CollapsingHeader("Model Values"))
 	{
 		ImGui::SliderFloat("Model X Position: ", &modelXPos, -20, 20, 0, 1);
-		ImGui::SliderFloat("Model Y Position: ", &modelYPos, 3, 20, 0, 1);
+		ImGui::SliderFloat("Model Y Position: ", &modelYPos, 0, 200, 0, 1);
 		ImGui::SliderFloat("Model Z Position: ", &modelZPos, -5, 80, 0, 1);
 	}
 

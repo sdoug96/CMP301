@@ -48,7 +48,7 @@ OutputType main(InputType input)
 	float4 offset = heightMap.SampleLevel(sampler0, input.tex, 0);
 
 	//offset position based on sine wave
-	input.position.y += offset.y / 3;
+	input.position.y += offset.y * 10;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
     output.position = mul(input.position, worldMatrix);

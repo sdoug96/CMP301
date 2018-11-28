@@ -55,7 +55,7 @@ private:
 	//GUI editbale mesh and model positions
 	float cubeXPos = 5, cubeYPos = 1, cubeZPos = 1;
 
-	float modelXPos = -20, modelYPos = 3, modelZPos = 5;
+	float modelXPos = -20, modelYPos = 68, modelZPos = 5;
 
 	float sphereXPos = 3, sphereYPos = 1, sphereZPos = 1;
 
@@ -76,6 +76,8 @@ private:
 	//Top right light
 	float light3XPos = 20.0f, light3YPos = 20.0f, light3ZPos = 75.0f;
 	float light3XDir = -0.7f, light3YDir = -0.7f, light3ZDir = -0.7f;
+
+	float treeScale = 0.01;
 
 	float lightHeightDownLimit = 0;
 	float lightHeightUpLimit = 20;

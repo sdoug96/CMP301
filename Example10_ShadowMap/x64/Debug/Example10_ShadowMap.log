@@ -1,0 +1,3 @@
+﻿C:\Users\scott\Documents\CMP301-Coursework\Example10_ShadowMap\depth_ps.hlsl(7,30-40): error X4502: invalid vs_2_0 output semantic 'SV_TARGET'
+  
+  compilation failed; no code produced
