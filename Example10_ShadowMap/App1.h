@@ -25,6 +25,7 @@ public:
 
 protected:
 
+	void geometryInit();
 	void lightsInit();
 
 	void guiEdits();
@@ -42,18 +43,16 @@ protected:
 
 	void teapotDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 	void cubeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
-	void sphereDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 
 	void teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 	void cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
-	void sphereFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
 	float time = 0, height = 0, frequency = 0, speed = 0;
 
 private:
 
 	//GUI editbale mesh and model positions
-	float cubeXPos = 5, cubeYPos = 1, cubeZPos = 1;
+	float cubeXPos = -71, cubeYPos = 0, cubeZPos = 99;
 
 	float modelXPos = -20, modelYPos = 68, modelZPos = 5;
 
@@ -77,8 +76,6 @@ private:
 	float light3XPos = 20.0f, light3YPos = 20.0f, light3ZPos = 75.0f;
 	float light3XDir = -0.7f, light3YDir = -0.7f, light3ZDir = -0.7f;
 
-	float treeScale = 0.01;
-
 	float lightHeightDownLimit = 0;
 	float lightHeightUpLimit = 20;
 
@@ -96,8 +93,8 @@ private:
 	OrthoMesh* orthoMesh3;
 
 	//Models
-	Model* model;
 	Model* tree;
+	Model* house;
 
 	//Lights
 	Light* light;
@@ -117,7 +114,7 @@ private:
 	RenderTexture* shadowMap2;
 	RenderTexture* shadowMap3;
 
-	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3, lightswitch, light1switch, light2switch, light3switch;
+	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3, lightoff, light1off, light2off, light3off;
 };
 
 #endif

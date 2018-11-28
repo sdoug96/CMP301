@@ -12,8 +12,6 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	//Initialise mesh objects
 	mesh = new PlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
-	cubeMesh = new CubeMesh(renderer->getDevice(), renderer->getDeviceContext());
-	sphereMesh = new SphereMesh(renderer->getDevice(), renderer->getDeviceContext());
 
 	//Initialise ortho mesh objects
 	orthoMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, screenHeight / 2.7);
@@ -21,7 +19,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	orthoMesh2 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, -screenHeight / 2.7);
 	orthoMesh3 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, screenWidth / 2.7, -screenHeight / 2.7);
 
-	model = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/tree.obj");
+	tree = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/tree.obj");
+	house = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/house.obj");
 
 	//Load textures
 	textureMgr->loadTexture("brick", L"res/brick1.dds");
@@ -29,6 +28,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	textureMgr->loadTexture("rock", L"res/rock.png");
 	textureMgr->loadTexture("terrain", L"res/terrain.jpg");
 	textureMgr->loadTexture("bark", L"res/bark.jpg");
+	textureMgr->loadTexture("house", L"res/WoodCabinDif.jpg");
 
 	//Initialise shaders
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
@@ -57,6 +57,11 @@ App1::~App1()
 	BaseApplication::~BaseApplication();
 
 	// Release the Direct3D object.
+
+}
+
+void App1::geometryInit()
+{
 
 }
 
@@ -115,48 +120,49 @@ void App1::guiEdits()
 	light3->setPosition(light3XPos, light3YPos, light3ZPos);
 	light3->setDirection(light3XDir, light3YDir, light3ZDir);
 
-	if (lightswitch)
-	{
-		light->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-		light->setDiffuseColour(0.0f, 0.0f, 1.0f, 1.0f);
-	}
-	else
+	if (lightoff)
 	{
 		light->setAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
 		light->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
 	}
-
-	if (light1switch)
-	{
-		light1->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-		light1->setDiffuseColour(1.0f, 0.0f, 0.0f, 1.0f);
-	}
 	else
+	{
+		light->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+		light->setDiffuseColour(0.0f, 0.0f, 1.0f, 1.0f);
+	}
+
+	if (light1off)
 	{
 		light1->setAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
 		light1->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
 	}
-
-	if (light2switch)
-	{
-		light2->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-		light2->setDiffuseColour(0.0f, 1.0f, 0.0f, 1.0f);
-	}
 	else
+	{
+		light1->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+		light1->setDiffuseColour(1.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	if (light2off)
 	{
 		light2->setAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
 		light2->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
 	}
-
-	if (light3switch)
-	{
-		light3->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-		light3->setDiffuseColour(1.0f, 1.0f, 0.0f, 1.0f);
-	}
 	else
+	{		
+		light2->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+		light2->setDiffuseColour(0.0f, 1.0f, 0.0f, 1.0f);	
+	}
+
+	if (light3off)
 	{
 		light3->setAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
 		light3->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+	else
+	{	
+		light3->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+		light3->setDiffuseColour(1.0f, 1.0f, 0.0f, 1.0f);
+		
 	}
 }
 
@@ -227,11 +233,6 @@ void App1::depthPass()
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
-	worldMatrix = renderer->getWorldMatrix();
-
-	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
-
 	//TEAPOT
 
 	teapotDepthPass(lightViewMatrix, lightProjectionMatrix);
@@ -239,10 +240,6 @@ void App1::depthPass()
 	//CUBE
 
 	cubeDepthPass(lightViewMatrix, lightProjectionMatrix);
-
-	//SPHERE
-
-	sphereDepthPass(lightViewMatrix, lightProjectionMatrix);
 
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
@@ -271,11 +268,6 @@ void App1::depthPass1()
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix1, lightProjectionMatrix1);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
-	worldMatrix = renderer->getWorldMatrix();
-
-	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
-
 	//TEAPOT
 
 	teapotDepthPass(lightViewMatrix1, lightProjectionMatrix1);
@@ -283,10 +275,6 @@ void App1::depthPass1()
 	//CUBE
 
 	cubeDepthPass(lightViewMatrix1, lightProjectionMatrix1);
-
-	//SPHERE
-
-	sphereDepthPass(lightViewMatrix1, lightProjectionMatrix1);
 
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
@@ -315,11 +303,6 @@ void App1::depthPass2()
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix2, lightProjectionMatrix2);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
-	worldMatrix = renderer->getWorldMatrix();
-
-	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
-
 	//TEAPOT
 
 	teapotDepthPass(lightViewMatrix2, lightProjectionMatrix2);
@@ -327,10 +310,6 @@ void App1::depthPass2()
 	//CUBE
 
 	cubeDepthPass(lightViewMatrix2, lightProjectionMatrix2);
-
-	//SPHERE
-
-	sphereDepthPass(lightViewMatrix2, lightProjectionMatrix2);
 
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
@@ -359,11 +338,6 @@ void App1::depthPass3()
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix3, lightProjectionMatrix3);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
-	worldMatrix = renderer->getWorldMatrix();
-
-	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
-
 	//TEAPOT
 
 	teapotDepthPass(lightViewMatrix3, lightProjectionMatrix3);
@@ -371,10 +345,6 @@ void App1::depthPass3()
 	//CUBE
 
 	cubeDepthPass(lightViewMatrix3, lightProjectionMatrix3);
-
-	//SPHERE
-
-	sphereDepthPass(lightViewMatrix3, lightProjectionMatrix3);
 
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
@@ -414,10 +384,6 @@ void App1::finalPass()
 	//CUBE
 
 	cubeFinalPass(viewMatrix, projectionMatrix);
-
-	//SPHERE
-
-	sphereFinalPass(viewMatrix, projectionMatrix);
 
 	// RENDER THE RENDER TEXTURE SCENE
 	// Requires 2D rendering and an ortho mesh.
@@ -481,84 +447,59 @@ void App1::teapotDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMat
 	XMMATRIX scaleMatrix = XMMatrixScaling(0.045, 0.045, 0.045);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
-	// Render model
-	model->sendData(renderer->getDeviceContext());
+	// Render tree
+	tree->sendData(renderer->getDeviceContext());
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	depthShader->render(renderer->getDeviceContext(), model->getIndexCount());
+	depthShader->render(renderer->getDeviceContext(), tree->getIndexCount());
 }
 
 void App1::cubeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix)
 {
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 
-	//TEAPOT
+	//CUBE
 
 	worldMatrix = renderer->getWorldMatrix();
 
-	//Translate teapot
+	//Translate cube
 	worldMatrix = XMMatrixTranslation(cubeXPos, cubeYPos, cubeZPos);
 
-	//Rotate teapot
-	//XMMATRIX rotateMatrix = XMMatrixRotationY(rotation);
-	//worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
+	//Rotate cube
+	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
+	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
 
-	//Scale teapot
-	XMMATRIX scaleMatrix = XMMatrixScaling(5.0f, 5.0f, 5.0f);
+	//Scale cube
+	XMMATRIX scaleMatrix = XMMatrixScaling(0.2, 0.2, 0.2);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
-	// Render model
-	cubeMesh->sendData(renderer->getDeviceContext());
+	// Render cube
+	house->sendData(renderer->getDeviceContext());
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	depthShader->render(renderer->getDeviceContext(), cubeMesh->getIndexCount());
-}
-
-void App1::sphereDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix)
-{
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-
-	//TEAPOT
-
-	worldMatrix = renderer->getWorldMatrix();
-
-	//Translate teapot
-	worldMatrix = XMMatrixTranslation(sphereXPos, sphereYPos, sphereZPos);
-
-	//Rotate teapot
-	//XMMATRIX rotateMatrix = XMMatrixRotationY(rotation);
-	//worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
-
-	//Scale teapot
-	XMMATRIX scaleMatrix = XMMatrixScaling(2.0f, 2.0f, 2.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
-
-	// Render model
-	sphereMesh->sendData(renderer->getDeviceContext());
-	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	depthShader->render(renderer->getDeviceContext(), sphereMesh->getIndexCount());
+	depthShader->render(renderer->getDeviceContext(), house->getIndexCount());
 }
 
 void App1::teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 {
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 
-	//TEAPOT
+	//TREE
 
 	worldMatrix = renderer->getWorldMatrix();
 
-	//Translate teapot
+	//Translate tree
 	worldMatrix = XMMatrixTranslation(modelXPos, modelYPos, modelZPos);
 
-	//Rotate teapot
+	//Rotate tree
 	//XMMATRIX rotateMatrix = XMMatrixRotationY(rotation);
 	//worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
 
-	//Scale teapot
+	//Scale tree
 	XMMATRIX scaleMatrix = XMMatrixScaling(0.045, 0.045, 0.045);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
-	model->sendData(renderer->getDeviceContext());
+	tree->sendData(renderer->getDeviceContext());
 	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
-	shadowShader->render(renderer->getDeviceContext(), model->getIndexCount());
+	shadowShader->render(renderer->getDeviceContext(), tree->getIndexCount());
 }
 
 void App1::cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
@@ -573,42 +514,17 @@ void App1::cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 	worldMatrix = XMMatrixTranslation(cubeXPos, cubeYPos, cubeZPos);
 
 	//Rotate cube
-	//XMMATRIX rotateMatrix1 = XMMatrixRotationY(rotation1);
-	//worldMatrix = XMMatrixMultiply(rotateMatrix1, worldMatrix);
+	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
+	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
 
 	//Scale cube
-	XMMATRIX scaleMatrix1 = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix1);
+	XMMATRIX scaleMatrix = XMMatrixScaling(0.2, 0.2, 0.2);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 	//Render cube
-	cubeMesh->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("brick"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
-	shadowShader->render(renderer->getDeviceContext(), cubeMesh->getIndexCount());
-}
-
-void App1::sphereFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
-{
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-
-	//SPHERE
-
-	worldMatrix = renderer->getWorldMatrix();
-
-	//Translate Sphere
-	worldMatrix = XMMatrixTranslation(sphereXPos, sphereYPos, sphereZPos);
-
-	////RotateSphere
-	//XMMATRIX rotateMatrix2 = XMMatrixRotationY(rotation2);
-	//worldMatrix = XMMatrixMultiply(worldMatrix, rotateMatrix2);
-
-	//Scale Sphere
-	XMMATRIX scaleMatrix2 = XMMatrixScaling(2.0f, 2.0f, 2.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix2);
-
-	//Render sphere
-	sphereMesh->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("rock"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
-	shadowShader->render(renderer->getDeviceContext(), sphereMesh->getIndexCount());
+	house->sendData(renderer->getDeviceContext());
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("house"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
+	shadowShader->render(renderer->getDeviceContext(), house->getIndexCount());
 }
 
 void App1::gui()
@@ -622,22 +538,13 @@ void App1::gui()
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
 
-	//Cube Stuff
+	//tree Stuff
 
-	if (ImGui::CollapsingHeader("Cube Values"))
+	if (ImGui::CollapsingHeader("tree Values"))
 	{
-		ImGui::SliderFloat("Cube X Position: ", &cubeXPos, -9, 9, 0, 1);
-		ImGui::SliderFloat("Cube Y Position: ", &cubeYPos, 1, 5, 0, 1);
-		ImGui::SliderFloat("Cube Z Position: ", &cubeZPos, -1, 16, 0, 1);
-	}
-
-	//Model Stuff
-
-	if (ImGui::CollapsingHeader("Model Values"))
-	{
-		ImGui::SliderFloat("Model X Position: ", &modelXPos, -20, 20, 0, 1);
-		ImGui::SliderFloat("Model Y Position: ", &modelYPos, 0, 200, 0, 1);
-		ImGui::SliderFloat("Model Z Position: ", &modelZPos, -5, 80, 0, 1);
+		ImGui::SliderFloat("tree X Position: ", &modelXPos, -20, 20, 0, 1);
+		ImGui::SliderFloat("tree Y Position: ", &modelYPos, 0, 200, 0, 1);
+		ImGui::SliderFloat("tree Z Position: ", &modelZPos, -5, 80, 0, 1);
 	}
 
 	//Light 1 Stuff
@@ -697,10 +604,10 @@ void App1::gui()
 
 	if (ImGui::CollapsingHeader("Light Switches"))
 	{
-		ImGui::Checkbox("Light 1 Switch: ", &lightswitch);
-		ImGui::Checkbox("Light 2 Switch: ", &light1switch);
-		ImGui::Checkbox("Light 3 Switch: ", &light2switch);
-		ImGui::Checkbox("Light 4 Switch: ", &light3switch);
+		ImGui::Checkbox("Light 1 Switch: ", &lightoff);
+		ImGui::Checkbox("Light 2 Switch: ", &light1off);
+		ImGui::Checkbox("Light 3 Switch: ", &light2off);
+		ImGui::Checkbox("Light 4 Switch: ", &light3off);
 	}
 
 	//Shadow Maps

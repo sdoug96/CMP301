@@ -1,13 +1,14 @@
 ﻿  App1.cpp
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.h(80): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(17): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(18): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
 c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(19): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
 c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(20): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(21): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(22): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(71): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(74): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(80): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(481): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(556): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(76): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(79): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(82): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(447): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(472): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(497): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(521): warning C4305: 'argument': truncation from 'double' to 'float'
   Example10_ShadowMap.vcxproj -> C:\Users\scott\Documents\CMP301-Coursework\Debug\Example10_ShadowMap.exe
