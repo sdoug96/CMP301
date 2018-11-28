@@ -16,11 +16,12 @@ cbuffer MatrixBuffer : register(b0)
 	matrix lightProjectionMatrix3;
 };
 
-cbuffer TimeBuffer : register(b1)
+cbuffer FogBuffer : register(b1)
 {
-	float time;
-	float3 padding;
-};
+	float fogStart;
+	float fogEnd;
+	float2 padding;
+}
 
 struct InputType
 {
@@ -38,12 +39,15 @@ struct OutputType
 	float4 lightViewPos1 : TEXCOORD2;
 	float4 lightViewPos2 : TEXCOORD3;
 	float4 lightViewPos3 : TEXCOORD4;
+	float fogFactor : FOG;
 };
 
 
 OutputType main(InputType input)
 {
     OutputType output;
+
+	float4 cameraPosition;
 
 	float4 offset = heightMap.SampleLevel(sampler0, input.tex, 0);
 
@@ -78,6 +82,11 @@ OutputType main(InputType input)
     output.tex = input.tex;
     output.normal = mul(input.normal, (float3x3)worldMatrix);
     output.normal = normalize(output.normal);
+
+	cameraPosition = mul(input.position, worldMatrix);
+	cameraPosition = mul(cameraPosition, viewMatrix);
+
+	output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));
 
 	return output;
 }

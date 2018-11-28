@@ -24,6 +24,7 @@ struct InputType
 	float4 lightViewPos1 : TEXCOORD2;
 	float4 lightViewPos2 : TEXCOORD3;
 	float4 lightViewPos3 : TEXCOORD4;
+	float fogFactor : FOG;
 };
 
 // Calculate lighting intensity based on direction and normal. Combine with light colour.
@@ -72,6 +73,10 @@ float4 main(InputType input) : SV_TARGET
 {
 	float4 textureColour = shaderTexture.Sample(diffuseSampler, input.tex);
 
+    float4 fogColour = float4(0.5f, 0.5f, 0.5f, 1.0f);
+
+	float4 finalFog = input.fogFactor + (1.0 - input.fogFactor) * fogColour;
+
 	//LIGHT 1
 
 	float4 colour = shadowCalc(input.lightViewPos, diffuse[0], direction[0], depthMapTexture, input, textureColour);
@@ -94,5 +99,5 @@ float4 main(InputType input) : SV_TARGET
 
 	colour += ambient[0];
 
-    return colour * textureColour;
+    return colour * textureColour * finalFog;
 }

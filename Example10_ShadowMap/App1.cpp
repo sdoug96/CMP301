@@ -34,7 +34,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
 	depthShader = new DepthShader(renderer->getDevice(), hwnd);
 	shadowShader = new ShadowShader(renderer->getDevice(), hwnd);
-	rippleShader = new RippleShader(renderer->getDevice(), hwnd);
+	fogShader = new FogShader(renderer->getDevice(), hwnd);
 
 	//Shadow map values
 	int shadowmapWidth = 4096;
@@ -128,7 +128,7 @@ void App1::guiEdits()
 	else
 	{
 		light->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-		light->setDiffuseColour(0.0f, 0.0f, 1.0f, 1.0f);
+		light->setDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	if (light1off)
@@ -139,7 +139,7 @@ void App1::guiEdits()
 	else
 	{
 		light1->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-		light1->setDiffuseColour(1.0f, 0.0f, 0.0f, 1.0f);
+		light1->setDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	if (light2off)
@@ -150,7 +150,7 @@ void App1::guiEdits()
 	else
 	{		
 		light2->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-		light2->setDiffuseColour(0.0f, 1.0f, 0.0f, 1.0f);	
+		light2->setDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);	
 	}
 
 	if (light3off)
@@ -161,7 +161,7 @@ void App1::guiEdits()
 	else
 	{	
 		light3->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-		light3->setDiffuseColour(1.0f, 1.0f, 0.0f, 1.0f);
+		light3->setDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);
 		
 	}
 }
@@ -188,8 +188,6 @@ bool App1::frame()
 
 bool App1::render()
 {
-	time += timer->getTime();
-
 	//Update GUI editable values
 	guiEdits();
 	// Perform depth pass
@@ -354,7 +352,8 @@ void App1::depthPass3()
 void App1::finalPass()
 {
 	// Clear the scene. (default blue colour)
-	renderer->beginScene(1.0f, 1.0f, 1.0f, 1.0f);
+	renderer->beginScene(fogColour, fogColour, fogColour, 1.0f);
+
 	camera->update();
 
 	// get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
@@ -369,7 +368,7 @@ void App1::finalPass()
 
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("terrain"), textureMgr->getTexture("heightMap"), shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("terrain"), textureMgr->getTexture("heightMap"), shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd);
 	shadowShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 	worldMatrix = renderer->getWorldMatrix();
@@ -498,7 +497,7 @@ void App1::teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 	tree->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd);
 	shadowShader->render(renderer->getDeviceContext(), tree->getIndexCount());
 }
 
@@ -523,7 +522,7 @@ void App1::cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 
 	//Render cube
 	house->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("house"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("house"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd);
 	shadowShader->render(renderer->getDeviceContext(), house->getIndexCount());
 }
 
@@ -540,11 +539,11 @@ void App1::gui()
 
 	//tree Stuff
 
-	if (ImGui::CollapsingHeader("tree Values"))
+	if (ImGui::CollapsingHeader("Tree Values"))
 	{
-		ImGui::SliderFloat("tree X Position: ", &modelXPos, -20, 20, 0, 1);
-		ImGui::SliderFloat("tree Y Position: ", &modelYPos, 0, 200, 0, 1);
-		ImGui::SliderFloat("tree Z Position: ", &modelZPos, -5, 80, 0, 1);
+		ImGui::SliderFloat("Tree X Position: ", &modelXPos, -20, 20, 0, 1);
+		ImGui::SliderFloat("Tree Y Position: ", &modelYPos, 0, 200, 0, 1);
+		ImGui::SliderFloat("Tree Z Position: ", &modelZPos, -5, 80, 0, 1);
 	}
 
 	//Light 1 Stuff
@@ -604,10 +603,10 @@ void App1::gui()
 
 	if (ImGui::CollapsingHeader("Light Switches"))
 	{
-		ImGui::Checkbox("Light 1 Switch: ", &lightoff);
-		ImGui::Checkbox("Light 2 Switch: ", &light1off);
-		ImGui::Checkbox("Light 3 Switch: ", &light2off);
-		ImGui::Checkbox("Light 4 Switch: ", &light3off);
+		ImGui::Checkbox("Switch Light 1 Off: ", &lightoff);
+		ImGui::Checkbox("Switch Light 2 Off: ", &light1off);
+		ImGui::Checkbox("Switch Light 3 Off: ", &light2off);
+		ImGui::Checkbox("Switch Light 4 Off: ", &light3off);
 	}
 
 	//Shadow Maps
@@ -618,13 +617,6 @@ void App1::gui()
 		ImGui::Checkbox("Render Second Shadow Map", &drawShadowMap1);
 		ImGui::Checkbox("Render Third Shadow Map", &drawShadowMap2);
 		ImGui::Checkbox("Render Fourth Shadow Map", &drawShadowMap3);
-	}
-
-	if (ImGui::CollapsingHeader("Plane Ripple Values"))
-	{
-		ImGui::SliderFloat("Wave height: ", &height, 0, 1, 0, 1);
-		ImGui::SliderFloat("Wave frquency: ", &frequency, 0, 20, 0, 1);
-		ImGui::SliderFloat("Wave speed: ", &speed, 0, 5, 0, 1);
 	}
 
 	//ImGui::ShowDemoWindow();

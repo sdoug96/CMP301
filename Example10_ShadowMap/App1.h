@@ -7,11 +7,7 @@
 #include "TextureShader.h"
 #include "ShadowShader.h"
 #include "DepthShader.h"
-#include "RippleShader.h"
-#include "SoftShadowShader.h"
-#include "HorizontalBlurShader.h"
-#include "VerticalBlurShader.h"
-#include "LightShader.h"
+#include "FogShader.h"
 
 class App1 : public BaseApplication
 {
@@ -47,7 +43,12 @@ protected:
 	void teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 	void cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
-	float time = 0, height = 0, frequency = 0, speed = 0;
+	float fogColour = 0.5f;
+
+	float fogStart = 10.0f;
+	float fogEnd = 100.0f;
+
+	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3, lightoff, light1off, light2off, light3off;
 
 private:
 
@@ -106,15 +107,13 @@ private:
 	ShadowShader* shadowShader;
 	DepthShader* depthShader;
 	TextureShader* textureShader;
-	RippleShader* rippleShader;
+	FogShader* fogShader;
 
 	//Shadow Maps
 	RenderTexture* shadowMap;
 	RenderTexture* shadowMap1;
 	RenderTexture* shadowMap2;
 	RenderTexture* shadowMap3;
-
-	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3, lightoff, light1off, light2off, light3off;
 };
 
 #endif
