@@ -20,9 +20,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	orthoMesh1 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, screenWidth / 2.7, screenHeight / 2.7);
 	orthoMesh2 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, -screenHeight / 2.7);
 	orthoMesh3 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, screenWidth / 2.7, -screenHeight / 2.7);
-	softShadowOrtho = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, screenHeight / 2.7);
 
-	model = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/teapot.obj");
+	model = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/tree.obj");
 
 	//Load textures
 	textureMgr->loadTexture("brick", L"res/brick1.dds");
@@ -33,10 +32,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
 	depthShader = new DepthShader(renderer->getDevice(), hwnd);
 	shadowShader = new ShadowShader(renderer->getDevice(), hwnd);
-	softShadowShader = new SoftShadowShader(renderer->getDevice(), hwnd);
 	rippleShader = new RippleShader(renderer->getDevice(), hwnd);
-	horizontalBlurShader = new HorizontalBlurShader(renderer->getDevice(), hwnd);
-	verticalBlurShader = new VerticalBlurShader(renderer->getDevice(), hwnd);
 
 	//Shadow map values
 	int shadowmapWidth = 4096;
@@ -196,6 +192,11 @@ bool App1::render()
 	depthPass2();
 	//Perform fourth depth pass
 	depthPass3();
+
+	//blurScenePass();
+	//horizontalBlur();
+	//verticalBlur();
+
 	// Render scene
 	finalPass();
 
@@ -223,6 +224,11 @@ void App1::depthPass()
 	mesh->sendData(renderer->getDeviceContext());
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+
+	worldMatrix = renderer->getWorldMatrix();
+
+	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 	//TEAPOT
 
@@ -263,6 +269,11 @@ void App1::depthPass1()
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix1, lightProjectionMatrix1);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
+	worldMatrix = renderer->getWorldMatrix();
+
+	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
+
 	//TEAPOT
 
 	teapotDepthPass(lightViewMatrix1, lightProjectionMatrix1);
@@ -301,6 +312,11 @@ void App1::depthPass2()
 	mesh->sendData(renderer->getDeviceContext());
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix2, lightProjectionMatrix2);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+
+	worldMatrix = renderer->getWorldMatrix();
+
+	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 	//TEAPOT
 
@@ -341,6 +357,11 @@ void App1::depthPass3()
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix3, lightProjectionMatrix3);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
+	worldMatrix = renderer->getWorldMatrix();
+
+	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
+
 	//TEAPOT
 
 	teapotDepthPass(lightViewMatrix3, lightProjectionMatrix3);
@@ -361,7 +382,7 @@ void App1::depthPass3()
 void App1::finalPass()
 {
 	// Clear the scene. (default blue colour)
-	renderer->beginScene(0.0f, 0.0f, 0.0f, 0.0f);
+	renderer->beginScene(1.0f, 1.0f, 1.0f, 1.0f);
 	camera->update();
 
 	// get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
@@ -378,6 +399,11 @@ void App1::finalPass()
 	mesh->sendData(renderer->getDeviceContext());
 	rippleShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("brick"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, time, height, frequency, speed);
 	rippleShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+
+	worldMatrix = renderer->getWorldMatrix();
+
+	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 	//TEAPOT
 
@@ -608,7 +634,7 @@ void App1::gui()
 	if (ImGui::CollapsingHeader("Model Values"))
 	{
 		ImGui::SliderFloat("Model X Position: ", &modelXPos, -20, 20, 0, 1);
-		ImGui::SliderFloat("Model Y Position: ", &modelYPos, 7, 20, 0, 1);
+		ImGui::SliderFloat("Model Y Position: ", &modelYPos, 3, 20, 0, 1);
 		ImGui::SliderFloat("Model Z Position: ", &modelZPos, -5, 80, 0, 1);
 	}
 

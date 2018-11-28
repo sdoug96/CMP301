@@ -11,6 +11,7 @@
 #include "SoftShadowShader.h"
 #include "HorizontalBlurShader.h"
 #include "VerticalBlurShader.h"
+#include "LightShader.h"
 
 class App1 : public BaseApplication
 {
@@ -25,16 +26,18 @@ public:
 protected:
 
 	void lightsInit();
+
 	void guiEdits();
+
 	bool render();
+
 	void depthPass();
 	void depthPass1();
 	void depthPass2();
 	void depthPass3();
-	void shadowPass();
-	void verticalBlur();
-	void horizontalBlur();
+
 	void finalPass();
+
 	void gui();
 
 	void teapotDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
@@ -52,7 +55,7 @@ private:
 	//GUI editbale mesh and model positions
 	float cubeXPos = 5, cubeYPos = 1, cubeZPos = 1;
 
-	float modelXPos = -20, modelYPos = 7, modelZPos = 5;
+	float modelXPos = -20, modelYPos = 3, modelZPos = 5;
 
 	float sphereXPos = 3, sphereYPos = 1, sphereZPos = 1;
 
@@ -84,14 +87,15 @@ private:
 	PlaneMesh* mesh;
 	CubeMesh* cubeMesh;
 	SphereMesh* sphereMesh;
+
 	OrthoMesh* orthoMesh;
 	OrthoMesh* orthoMesh1;
 	OrthoMesh* orthoMesh2;
 	OrthoMesh* orthoMesh3;
-	OrthoMesh* softShadowOrtho;
 
 	//Models
 	Model* model;
+	Model* tree;
 
 	//Lights
 	Light* light;
@@ -101,21 +105,15 @@ private:
 
 	//Shaders
 	ShadowShader* shadowShader;
-	SoftShadowShader* softShadowShader;
 	DepthShader* depthShader;
 	TextureShader* textureShader;
 	RippleShader* rippleShader;
-	HorizontalBlurShader* horizontalBlurShader;
-	VerticalBlurShader* verticalBlurShader;
 
 	//Shadow Maps
 	RenderTexture* shadowMap;
 	RenderTexture* shadowMap1;
 	RenderTexture* shadowMap2;
 	RenderTexture* shadowMap3;
-	RenderTexture* renderTexture;
-	RenderTexture* horizontalBlurTexture;
-	RenderTexture* verticalBlurTexture;
 
 	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3, lightswitch, light1switch, light2switch, light3switch;
 };
