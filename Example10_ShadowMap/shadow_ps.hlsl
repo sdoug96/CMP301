@@ -15,6 +15,12 @@ cbuffer LightBuffer : register(b0)
 	float4 direction[4];
 };
 
+cbuffer FogBuffer : register(b1)
+{
+	bool fogDisable;
+	float3 padding;
+}
+
 struct InputType
 {
     float4 position : SV_POSITION;
@@ -24,7 +30,7 @@ struct InputType
 	float4 lightViewPos1 : TEXCOORD2;
 	float4 lightViewPos2 : TEXCOORD3;
 	float4 lightViewPos3 : TEXCOORD4;
-	float fogFactor : FOG;
+	float fogFactor : TEXCOORD5;
 };
 
 // Calculate lighting intensity based on direction and normal. Combine with light colour.
@@ -94,10 +100,21 @@ float4 main(InputType input) : SV_TARGET
 	float4 colour3 = shadowCalc(input.lightViewPos3, diffuse[3], direction[3], depthMapTexture3, input, textureColour);
     
 	//Add light colours to give proper effect
-
 	colour = colour + colour1 + colour2 + colour3;
 
+	//Add ambient light
 	colour += ambient[0];
 
-    return colour * textureColour * finalFog;
+	//Add texture
+	colour = colour * textureColour;
+
+	if (fogDisable)
+	{
+		return colour;
+	}
+	else
+	{
+		//Combine lit colour with fog
+		return lerp(colour, fogColour, finalFog);
+	}
 }

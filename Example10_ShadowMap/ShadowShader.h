@@ -40,6 +40,18 @@ private:
 		XMFLOAT2 padding;
 	};
 
+	struct FogBufferType1
+	{
+		float fogDisable;
+		XMFLOAT3 padding;
+	};
+
+	struct CameraBufferType
+	{
+		XMFLOAT3 cameraPosition;
+		float padding;
+	};
+
 public:
 
 	ShadowShader(ID3D11Device* device, HWND hwnd);
@@ -66,7 +78,9 @@ public:
 		XMFLOAT4 light2Dir, 
 		XMFLOAT4 light3Dir,
 		float fogStart,
-		float fogEnd
+		float fogEnd,
+		Camera* cam,
+		bool fogDisable
 	);
 
 private:
@@ -76,6 +90,8 @@ private:
 	ID3D11Buffer* matrixBuffer;
 	ID3D11Buffer* lightBuffer;
 	ID3D11Buffer* fogBuffer;
+	ID3D11Buffer* fogBuffer1;
+	ID3D11Buffer* cameraBuffer;
 
 	ID3D11SamplerState* sampleState;
 	ID3D11SamplerState* sampleStateShadow;

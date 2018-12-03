@@ -23,6 +23,12 @@ cbuffer FogBuffer : register(b1)
 	float2 padding;
 }
 
+cbuffer CameraBuffer : register(b2)
+{
+	float3 camPos;
+	float padding1;
+}
+
 struct InputType
 {
     float4 position : POSITION;
@@ -39,15 +45,14 @@ struct OutputType
 	float4 lightViewPos1 : TEXCOORD2;
 	float4 lightViewPos2 : TEXCOORD3;
 	float4 lightViewPos3 : TEXCOORD4;
-	float fogFactor : FOG;
+	float fogFactor : TEXCOORD5;
+	float3 viewVector : TEXCOORD6;
 };
 
 
 OutputType main(InputType input)
 {
     OutputType output;
-
-	float4 cameraPosition;
 
 	float4 offset = heightMap.SampleLevel(sampler0, input.tex, 0);
 
@@ -79,14 +84,16 @@ OutputType main(InputType input)
 	output.lightViewPos3 = mul(output.lightViewPos3, lightViewMatrix3);
 	output.lightViewPos3 = mul(output.lightViewPos3, lightProjectionMatrix3);
 
+	// Calculate the position of the vertex against the world, view, and projection matrices.
+	float4 worldPosition = mul(input.position, worldMatrix);
+	output.viewVector = camPos.xyz - worldPosition.xyz;
+	output.viewVector = normalize(output.viewVector);
+
     output.tex = input.tex;
     output.normal = mul(input.normal, (float3x3)worldMatrix);
     output.normal = normalize(output.normal);
 
-	cameraPosition = mul(input.position, worldMatrix);
-	cameraPosition = mul(cameraPosition, viewMatrix);
-
-	output.fogFactor = saturate((fogEnd - cameraPosition.z) / (fogEnd - fogStart));
+	output.fogFactor = saturate(length(output.viewVector) - fogStart / (fogEnd - fogStart));
 
 	return output;
 }

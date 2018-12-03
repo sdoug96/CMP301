@@ -7,7 +7,6 @@
 #include "TextureShader.h"
 #include "ShadowShader.h"
 #include "DepthShader.h"
-#include "FogShader.h"
 
 class App1 : public BaseApplication
 {
@@ -39,13 +38,15 @@ protected:
 
 	void teapotDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 	void cubeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
+	void campfireDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 
 	void teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 	void cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
+	void campfireFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
 	float fogColour = 0.5f;
 
-	float fogStart = 10.0f;
+	float fogStart = 15.0f;
 	float fogEnd = 100.0f;
 
 	bool drawShadowMap, drawShadowMap1, drawShadowMap2, drawShadowMap3, lightoff, light1off, light2off, light3off;
@@ -57,7 +58,7 @@ private:
 
 	float modelXPos = -20, modelYPos = 68, modelZPos = 5;
 
-	float sphereXPos = 3, sphereYPos = 1, sphereZPos = 1;
+	float fireXPos = -4, fireYPos = 2, fireZPos = 39;
 
 	//GUI editable light positions and directions
 
@@ -80,6 +81,8 @@ private:
 	float lightHeightDownLimit = 0;
 	float lightHeightUpLimit = 20;
 
+	bool fogDisable;
+
 	//Light Directions
 	XMFLOAT4 lightDir, light1Dir, light2Dir, light3Dir;
 
@@ -88,6 +91,7 @@ private:
 	CubeMesh* cubeMesh;
 	SphereMesh* sphereMesh;
 
+	//Ortho mesh objects
 	OrthoMesh* orthoMesh;
 	OrthoMesh* orthoMesh1;
 	OrthoMesh* orthoMesh2;
@@ -96,6 +100,7 @@ private:
 	//Models
 	Model* tree;
 	Model* house;
+	Model* campfire;
 
 	//Lights
 	Light* light;
@@ -107,7 +112,6 @@ private:
 	ShadowShader* shadowShader;
 	DepthShader* depthShader;
 	TextureShader* textureShader;
-	FogShader* fogShader;
 
 	//Shadow Maps
 	RenderTexture* shadowMap;

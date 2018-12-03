@@ -21,9 +21,9 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	tree = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/tree.obj");
 	house = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/house.obj");
+	campfire = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/campfire.obj");
 
 	//Load textures
-	textureMgr->loadTexture("brick", L"res/brick1.dds");
 	textureMgr->loadTexture("heightMap", L"res/heightMap.png");
 	textureMgr->loadTexture("rock", L"res/rock.png");
 	textureMgr->loadTexture("terrain", L"res/terrain.jpg");
@@ -34,7 +34,6 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
 	depthShader = new DepthShader(renderer->getDevice(), hwnd);
 	shadowShader = new ShadowShader(renderer->getDevice(), hwnd);
-	fogShader = new FogShader(renderer->getDevice(), hwnd);
 
 	//Shadow map values
 	int shadowmapWidth = 4096;
@@ -239,6 +238,10 @@ void App1::depthPass()
 
 	cubeDepthPass(lightViewMatrix, lightProjectionMatrix);
 
+	//CAMPFIRE
+
+	campfireDepthPass(lightViewMatrix, lightProjectionMatrix);
+
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
 	renderer->resetViewport();
@@ -273,6 +276,10 @@ void App1::depthPass1()
 	//CUBE
 
 	cubeDepthPass(lightViewMatrix1, lightProjectionMatrix1);
+
+	//CAMPFIRE
+
+	campfireDepthPass(lightViewMatrix1, lightProjectionMatrix1);
 
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
@@ -309,6 +316,10 @@ void App1::depthPass2()
 
 	cubeDepthPass(lightViewMatrix2, lightProjectionMatrix2);
 
+	//CAMPFIRE
+
+	campfireDepthPass(lightViewMatrix2, lightProjectionMatrix2);
+
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
 	renderer->resetViewport();
@@ -344,6 +355,10 @@ void App1::depthPass3()
 
 	cubeDepthPass(lightViewMatrix3, lightProjectionMatrix3);
 
+	//CAMPFIRE
+
+	campfireDepthPass(lightViewMatrix3, lightProjectionMatrix3);
+
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
 	renderer->resetViewport();
@@ -368,7 +383,7 @@ void App1::finalPass()
 
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("terrain"), textureMgr->getTexture("heightMap"), shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("terrain"), textureMgr->getTexture("heightMap"), shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
 	shadowShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 	worldMatrix = renderer->getWorldMatrix();
@@ -383,6 +398,10 @@ void App1::finalPass()
 	//CUBE
 
 	cubeFinalPass(viewMatrix, projectionMatrix);
+
+	//CAMPFIRE
+
+	campfireFinalPass(viewMatrix, projectionMatrix);
 
 	// RENDER THE RENDER TEXTURE SCENE
 	// Requires 2D rendering and an ortho mesh.
@@ -477,6 +496,31 @@ void App1::cubeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatri
 	depthShader->render(renderer->getDeviceContext(), house->getIndexCount());
 }
 
+void App1::campfireDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix)
+{
+	XMMATRIX worldMatrix = renderer->getWorldMatrix();
+
+	//CUBE
+
+	worldMatrix = renderer->getWorldMatrix();
+
+	//Translate cube
+	worldMatrix = XMMatrixTranslation(fireXPos, fireYPos, fireZPos);
+
+	//Rotate cube
+	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
+	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
+
+	//Scale cube
+	XMMATRIX scaleMatrix = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
+
+	//Render cube
+	campfire->sendData(renderer->getDeviceContext());
+	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	depthShader->render(renderer->getDeviceContext(), campfire->getIndexCount());
+}
+
 void App1::teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 {
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
@@ -497,7 +541,7 @@ void App1::teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 	tree->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
 	shadowShader->render(renderer->getDeviceContext(), tree->getIndexCount());
 }
 
@@ -522,8 +566,33 @@ void App1::cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 
 	//Render cube
 	house->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("house"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("house"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
 	shadowShader->render(renderer->getDeviceContext(), house->getIndexCount());
+}
+
+void App1::campfireFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+{
+	XMMATRIX worldMatrix = renderer->getWorldMatrix();
+
+	//CUBE
+
+	worldMatrix = renderer->getWorldMatrix();
+
+	//Translate cube
+	worldMatrix = XMMatrixTranslation(fireXPos, fireYPos, fireZPos);
+
+	//Rotate cube
+	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
+	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
+
+	//Scale cube
+	XMMATRIX scaleMatrix = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
+
+	//Render cube
+	campfire->sendData(renderer->getDeviceContext());
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
+	shadowShader->render(renderer->getDeviceContext(), campfire->getIndexCount());
 }
 
 void App1::gui()
@@ -535,7 +604,8 @@ void App1::gui()
 
 	// Build UI
 	ImGui::Text("FPS: %.2f", timer->getFPS());
-	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
+	ImGui::Checkbox("Wireframe Mode: ", &wireframeToggle);
+	ImGui::Checkbox("Disable Fog: ", &fogDisable);
 
 	//tree Stuff
 

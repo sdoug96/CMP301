@@ -35,6 +35,20 @@ ShadowShader::~ShadowShader()
 		fogBuffer = 0;
 	}
 
+	// Release the second fog constant buffer.
+	if (fogBuffer)
+	{
+		fogBuffer->Release();
+		fogBuffer = 0;
+	}
+
+	// Release the camera constant buffer.
+	if (cameraBuffer)
+	{
+		cameraBuffer->Release();
+		cameraBuffer = 0;
+	}
+
 	//Release base shader components
 	BaseShader::~BaseShader();
 }
@@ -45,6 +59,8 @@ void ShadowShader::initShader(WCHAR* vsFilename, WCHAR* psFilename)
 	D3D11_SAMPLER_DESC samplerDesc;
 	D3D11_BUFFER_DESC lightBufferDesc;
 	D3D11_BUFFER_DESC fogBufferDesc;
+	D3D11_BUFFER_DESC fogBufferDesc1;
+	D3D11_BUFFER_DESC cameraBufferDesc;
 
 	// Load (+ compile) shader files
 	loadVertexShader(vsFilename);
@@ -105,14 +121,36 @@ void ShadowShader::initShader(WCHAR* vsFilename, WCHAR* psFilename)
 
 	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	renderer->CreateBuffer(&fogBufferDesc, NULL, &fogBuffer);
+
+	// Setup the description of the second dynamic fog constant buffer that is in the pixel shader.
+	fogBufferDesc1.Usage = D3D11_USAGE_DYNAMIC;
+	fogBufferDesc1.ByteWidth = sizeof(FogBufferType1);
+	fogBufferDesc1.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	fogBufferDesc1.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	fogBufferDesc1.MiscFlags = 0;
+	fogBufferDesc1.StructureByteStride = 0;
+
+	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	renderer->CreateBuffer(&fogBufferDesc1, NULL, &fogBuffer1);
+
+	//Setup camera buffer
+	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cameraBufferDesc.ByteWidth = sizeof(CameraBufferType);
+	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cameraBufferDesc.MiscFlags = 0;
+	cameraBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&cameraBufferDesc, NULL, &cameraBuffer);
 }
 
-void ShadowShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* heightMap, ID3D11ShaderResourceView*depthMap, ID3D11ShaderResourceView*depthMap1, ID3D11ShaderResourceView*depthMap2, ID3D11ShaderResourceView*depthMap3, Light* light, Light* light1, Light* light2, Light* light3, XMFLOAT4 lightDir, XMFLOAT4 light1Dir, XMFLOAT4 light2Dir, XMFLOAT4 light3Dir, float fogStart, float fogEnd)
+void ShadowShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* heightMap, ID3D11ShaderResourceView*depthMap, ID3D11ShaderResourceView*depthMap1, ID3D11ShaderResourceView*depthMap2, ID3D11ShaderResourceView*depthMap3, Light* light, Light* light1, Light* light2, Light* light3, XMFLOAT4 lightDir, XMFLOAT4 light1Dir, XMFLOAT4 light2Dir, XMFLOAT4 light3Dir, float fogStart, float fogEnd, Camera* cam, bool fogDisable)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	LightBufferType* lightPtr;
 	FogBufferType* fogPtr;
+	FogBufferType1* fogPtr1;
+	CameraBufferType* camPtr;
 	
 	// Transpose the matrices to prepare them for the shader.
 	XMMATRIX tworld = XMMatrixTranspose(worldMatrix);
@@ -154,7 +192,6 @@ void ShadowShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const
 	deviceContext->Unmap(matrixBuffer, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
 
-	//Additional
 	// Send light data to pixel shader
 	deviceContext->Map(lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	lightPtr = (LightBufferType*)mappedResource.pData;
@@ -187,6 +224,26 @@ void ShadowShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const
 
 	deviceContext->Unmap(fogBuffer, 0);
 	deviceContext->VSSetConstantBuffers(1, 1, &fogBuffer);
+
+	// Send matrix data
+	deviceContext->Map(fogBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	fogPtr1 = (FogBufferType1*)mappedResource.pData;
+	fogPtr1->fogDisable = fogDisable;
+	fogPtr1->padding.x = 0;
+	fogPtr1->padding.y = 0;
+	fogPtr1->padding.z = 0;
+
+	deviceContext->Unmap(fogBuffer1, 0);
+	deviceContext->PSSetConstantBuffers(1, 1, &fogBuffer1);
+
+	//Send camera data
+	deviceContext->Map(cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	camPtr = (CameraBufferType*)mappedResource.pData;
+	camPtr->cameraPosition = cam->getPosition();
+	camPtr->padding = 0.0f;
+
+	deviceContext->Unmap(cameraBuffer, 0);
+	deviceContext->VSSetConstantBuffers(2, 1, &cameraBuffer);
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);
