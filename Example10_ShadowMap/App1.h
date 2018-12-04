@@ -7,6 +7,7 @@
 #include "TextureShader.h"
 #include "ShadowShader.h"
 #include "DepthShader.h"
+#include "TessPlaneMesh.h"
 
 class App1 : public BaseApplication
 {
@@ -54,11 +55,11 @@ protected:
 private:
 
 	//GUI editbale mesh and model positions
-	float cubeXPos = -71, cubeYPos = 0, cubeZPos = 99;
+	float cubeXPos = -71, cubeYPos = -99, cubeZPos = 99;
 
-	float modelXPos = -20, modelYPos = 68, modelZPos = 5;
+	float modelXPos = -20, modelYPos = -380, modelZPos = 5;
 
-	float fireXPos = -4, fireYPos = 2, fireZPos = 39;
+	float fireXPos = -4, fireYPos = -18, fireZPos = 39;
 
 	//GUI editable light positions and directions
 
@@ -88,8 +89,7 @@ private:
 
 	//Mesh objects
 	PlaneMesh* mesh;
-	CubeMesh* cubeMesh;
-	SphereMesh* sphereMesh;
+	TessPlaneMesh* plane;
 
 	//Ortho mesh objects
 	OrthoMesh* orthoMesh;

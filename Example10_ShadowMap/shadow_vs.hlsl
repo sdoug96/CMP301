@@ -16,6 +16,7 @@ cbuffer MatrixBuffer : register(b0)
 	matrix lightProjectionMatrix3;
 };
 
+//Fog buffer
 cbuffer FogBuffer : register(b1)
 {
 	float fogStart;
@@ -23,6 +24,7 @@ cbuffer FogBuffer : register(b1)
 	float2 padding;
 }
 
+//Camera buffer
 cbuffer CameraBuffer : register(b2)
 {
 	float3 camPos;
@@ -93,6 +95,7 @@ OutputType main(InputType input)
     output.normal = mul(input.normal, (float3x3)worldMatrix);
     output.normal = normalize(output.normal);
 
+	//Fog calculation based on how far camera is from the vertex
 	output.fogFactor = saturate(length(output.viewVector) - fogStart / (fogEnd - fogStart));
 
 	return output;

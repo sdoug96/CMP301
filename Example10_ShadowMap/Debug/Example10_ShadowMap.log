@@ -1,14 +1,5 @@
-﻿  App1.cpp
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(17): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(18): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(19): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(20): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(75): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(78): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(81): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(84): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(465): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(490): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(540): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\scott\documents\cmp301-coursework\example10_shadowmap\app1.cpp(564): warning C4305: 'argument': truncation from 'double' to 'float'
+﻿  TessPlaneMesh.cpp
+DXFramework.lib(WICTextureLoader.obj) : warning LNK4099: PDB 'DirectXTK.pdb' was not found with 'DXFramework.lib(WICTextureLoader.obj)' or at 'C:\Users\scott\Documents\CMP301-Coursework\Debug\DirectXTK.pdb'; linking object as if no debug info
+DXFramework.lib(pch.obj) : warning LNK4099: PDB 'DirectXTK.pdb' was not found with 'DXFramework.lib(pch.obj)' or at 'C:\Users\scott\Documents\CMP301-Coursework\Debug\DirectXTK.pdb'; linking object as if no debug info
+DXFramework.lib(DDSTextureLoader.obj) : warning LNK4099: PDB 'DirectXTK.pdb' was not found with 'DXFramework.lib(DDSTextureLoader.obj)' or at 'C:\Users\scott\Documents\CMP301-Coursework\Debug\DirectXTK.pdb'; linking object as if no debug info
   Example10_ShadowMap.vcxproj -> C:\Users\scott\Documents\CMP301-Coursework\Debug\Example10_ShadowMap.exe

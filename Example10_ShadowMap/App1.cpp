@@ -12,6 +12,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	//Initialise mesh objects
 	mesh = new PlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
+	plane = new TessPlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
 
 	//Initialise ortho mesh objects
 	orthoMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, screenHeight / 2.7);
@@ -147,9 +148,9 @@ void App1::guiEdits()
 		light2->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 	else
-	{		
+	{
 		light2->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-		light2->setDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);	
+		light2->setDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	if (light3off)
@@ -158,10 +159,10 @@ void App1::guiEdits()
 		light3->setDiffuseColour(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 	else
-	{	
+	{
 		light3->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
 		light3->setDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);
-		
+
 	}
 }
 
@@ -223,7 +224,7 @@ void App1::depthPass()
 	//FLOOR
 
 	//Translate floor
-	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
+	worldMatrix = XMMatrixTranslation(-50.f, -20.f, -10.f);
 
 	//Render floor
 	mesh->sendData(renderer->getDeviceContext());
@@ -262,7 +263,7 @@ void App1::depthPass1()
 	//FLOOR
 
 	//Translate floor
-	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
+	worldMatrix = XMMatrixTranslation(-50.f, -20.f, -10.f);
 
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
@@ -301,7 +302,7 @@ void App1::depthPass2()
 	//FLOOR
 
 	//Translate floor
-	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
+	worldMatrix = XMMatrixTranslation(-50.f, -20.f, -10.f);
 
 	//Render floor
 	mesh->sendData(renderer->getDeviceContext());
@@ -340,7 +341,7 @@ void App1::depthPass3()
 	//FLOOR
 
 	//Translate floor
-	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
+	worldMatrix = XMMatrixTranslation(-50.f, -20.f, -10.f);
 
 	//Render floor
 	mesh->sendData(renderer->getDeviceContext());
@@ -379,7 +380,7 @@ void App1::finalPass()
 	//FLOOR
 
 	//Translate floor
-	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
+	worldMatrix = XMMatrixTranslation(-50.f, -20.f, -10.f);
 
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
@@ -402,6 +403,13 @@ void App1::finalPass()
 	//CAMPFIRE
 
 	campfireFinalPass(viewMatrix, projectionMatrix);
+
+	worldMatrix = renderer->getWorldMatrix();
+
+	// Send geometry data, set shader parameters, render object with shader
+	plane->sendData(renderer->getDeviceContext());
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
+	shadowShader->render(renderer->getDeviceContext(), plane->getIndexCount());
 
 	// RENDER THE RENDER TEXTURE SCENE
 	// Requires 2D rendering and an ortho mesh.
@@ -606,15 +614,6 @@ void App1::gui()
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe Mode: ", &wireframeToggle);
 	ImGui::Checkbox("Disable Fog: ", &fogDisable);
-
-	//tree Stuff
-
-	if (ImGui::CollapsingHeader("Tree Values"))
-	{
-		ImGui::SliderFloat("Tree X Position: ", &modelXPos, -20, 20, 0, 1);
-		ImGui::SliderFloat("Tree Y Position: ", &modelYPos, 0, 200, 0, 1);
-		ImGui::SliderFloat("Tree Z Position: ", &modelZPos, -5, 80, 0, 1);
-	}
 
 	//Light 1 Stuff
 

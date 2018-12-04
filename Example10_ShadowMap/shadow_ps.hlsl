@@ -8,6 +8,7 @@ Texture2D depthMapTexture3 : register(t4);
 SamplerState diffuseSampler  : register(s0);
 SamplerState shadowSampler : register(s1);
 
+//Light buffer
 cbuffer LightBuffer : register(b0)
 {
 	float4 ambient[4];
@@ -15,6 +16,7 @@ cbuffer LightBuffer : register(b0)
 	float4 direction[4];
 };
 
+//Fog buffer
 cbuffer FogBuffer : register(b1)
 {
 	bool fogDisable;
@@ -33,7 +35,7 @@ struct InputType
 	float fogFactor : TEXCOORD5;
 };
 
-// Calculate lighting intensity based on direction and normal. Combine with light colour.
+//Calculate lighting intensity based on direction and normal. Combine with light colour.
 float4 calculateLighting(float3 lightDirection, float3 normal, float4 diffuse)
 {
     float intensity = saturate(dot(normal, lightDirection));
@@ -48,25 +50,25 @@ float4 shadowCalc(float4 lightViewPos, float4 diffuse, float4 direction, Texture
 	float shadowMapBias = 0.005f;
 	float4 colour = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	
-	// Calculate the projected texture coordinates.
+	//Calculate the projected texture coordinates.
 	float2 pTexCoord = lightViewPos.xy / lightViewPos.w;
 	pTexCoord *= float2(0.5, -0.5);
 	pTexCoord += float2(0.5f, 0.5f);
 
-	// Determine if the projected coordinates are in the 0 to 1 range.  If not don't do lighting.
+	//Determine if the projected coordinates are in the 0 to 1 range.  If not don't do lighting.
 	if (pTexCoord.x < 0.f || pTexCoord.x > 1.f || pTexCoord.y < 0.f || pTexCoord.y > 1.f)
 	{
 		return textureColour;
 	}
 
-	// Sample the shadow map (get depth of geometry)
+	//Sample the shadow map (get depth of geometry)
 	depthValue = depthMapTexture.Sample(shadowSampler, pTexCoord).r;
 
-	// Calculate the depth from the light.
+	//Calculate the depth from the light.
 	lightDepthValue = lightViewPos.z / lightViewPos.w;
 	lightDepthValue -= shadowMapBias;
 
-	// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
+	//Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
 	if (lightDepthValue < depthValue)
 	{
 		colour = calculateLighting(-direction, input.normal, diffuse);
@@ -77,10 +79,13 @@ float4 shadowCalc(float4 lightViewPos, float4 diffuse, float4 direction, Texture
 
 float4 main(InputType input) : SV_TARGET
 {
+	//Texture colour
 	float4 textureColour = shaderTexture.Sample(diffuseSampler, input.tex);
 
+	//Fog colour
     float4 fogColour = float4(0.5f, 0.5f, 0.5f, 1.0f);
 
+	//Final fog amount calculation
 	float4 finalFog = input.fogFactor + (1.0 - input.fogFactor) * fogColour;
 
 	//LIGHT 1
@@ -108,6 +113,7 @@ float4 main(InputType input) : SV_TARGET
 	//Add texture
 	colour = colour * textureColour;
 
+	//If fog is disabled return regular lit colour, if not, apply fog
 	if (fogDisable)
 	{
 		return colour;
