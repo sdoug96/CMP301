@@ -7,6 +7,7 @@
 #include "TextureShader.h"
 #include "ShadowShader.h"
 #include "DepthShader.h"
+#include "RainShader.h"
 #include "TessPlaneMesh.h"
 
 class App1 : public BaseApplication
@@ -45,7 +46,7 @@ protected:
 	void cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 	void campfireFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
-	float fogColour = 0.5f;
+	float fogColour = 0.9f;
 
 	float fogStart = 15.0f;
 	float fogEnd = 100.0f;
@@ -90,6 +91,7 @@ private:
 	//Mesh objects
 	PlaneMesh* mesh;
 	TessPlaneMesh* plane;
+	PointMesh* pointMesh;
 
 	//Ortho mesh objects
 	OrthoMesh* orthoMesh;
@@ -112,6 +114,7 @@ private:
 	ShadowShader* shadowShader;
 	DepthShader* depthShader;
 	TextureShader* textureShader;
+	RainShader* rainShader;
 
 	//Shadow Maps
 	RenderTexture* shadowMap;

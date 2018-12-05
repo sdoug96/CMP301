@@ -96,7 +96,7 @@ OutputType main(InputType input)
     output.normal = normalize(output.normal);
 
 	//Fog calculation based on how far camera is from the vertex
-	output.fogFactor = saturate(length(output.viewVector) - fogStart / (fogEnd - fogStart));
+	output.fogFactor = saturate((length(output.viewVector) - fogStart) / (fogEnd - fogStart));
 
 	return output;
 }

@@ -36,10 +36,10 @@ ShadowShader::~ShadowShader()
 	}
 
 	// Release the second fog constant buffer.
-	if (fogBuffer)
+	if (fogBuffer1)
 	{
-		fogBuffer->Release();
-		fogBuffer = 0;
+		fogBuffer1->Release();
+		fogBuffer1 = 0;
 	}
 
 	// Release the camera constant buffer.

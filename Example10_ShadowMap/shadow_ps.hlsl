@@ -1,4 +1,3 @@
-
 Texture2D shaderTexture : register(t0);
 Texture2D depthMapTexture : register(t1);
 Texture2D depthMapTexture1 : register(t2);
@@ -47,7 +46,7 @@ float4 shadowCalc(float4 lightViewPos, float4 diffuse, float4 direction, Texture
 {
 	float depthValue;
 	float lightDepthValue;
-	float shadowMapBias = 0.005f;
+	float shadowMapBias = 0.0005f;
 	float4 colour = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	
 	//Calculate the projected texture coordinates.
@@ -79,11 +78,13 @@ float4 shadowCalc(float4 lightViewPos, float4 diffuse, float4 direction, Texture
 
 float4 main(InputType input) : SV_TARGET
 {
+	float fogCol = 0.9f;
+
 	//Texture colour
 	float4 textureColour = shaderTexture.Sample(diffuseSampler, input.tex);
 
 	//Fog colour
-    float4 fogColour = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    float4 fogColour = float4(fogCol, fogCol, fogCol, 1.0f);
 
 	//Final fog amount calculation
 	float4 finalFog = input.fogFactor + (1.0 - input.fogFactor) * fogColour;

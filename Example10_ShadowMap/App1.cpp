@@ -13,6 +13,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	//Initialise mesh objects
 	mesh = new PlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
 	plane = new TessPlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
+	pointMesh = new PointMesh(renderer->getDevice(), renderer->getDeviceContext());
 
 	//Initialise ortho mesh objects
 	orthoMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, screenHeight / 2.7);
@@ -27,7 +28,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	//Load textures
 	textureMgr->loadTexture("heightMap", L"res/heightMap.png");
 	textureMgr->loadTexture("rock", L"res/rock.png");
-	textureMgr->loadTexture("terrain", L"res/terrain.jpg");
+	textureMgr->loadTexture("snow", L"res/snow.jpg");
 	textureMgr->loadTexture("bark", L"res/bark.jpg");
 	textureMgr->loadTexture("house", L"res/WoodCabinDif.jpg");
 
@@ -35,6 +36,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
 	depthShader = new DepthShader(renderer->getDevice(), hwnd);
 	shadowShader = new ShadowShader(renderer->getDevice(), hwnd);
+	rainShader = new RainShader(renderer->getDevice(), hwnd);
 
 	//Shadow map values
 	int shadowmapWidth = 4096;
@@ -384,7 +386,7 @@ void App1::finalPass()
 
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("terrain"), textureMgr->getTexture("heightMap"), shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("snow"), textureMgr->getTexture("heightMap"), shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
 	shadowShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 	worldMatrix = renderer->getWorldMatrix();
@@ -407,9 +409,14 @@ void App1::finalPass()
 	worldMatrix = renderer->getWorldMatrix();
 
 	// Send geometry data, set shader parameters, render object with shader
-	plane->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
-	shadowShader->render(renderer->getDeviceContext(), plane->getIndexCount());
+	pointMesh->sendData(renderer->getDeviceContext());
+	rainShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), fogStart, fogEnd, camera, fogDisable);
+	rainShader->render(renderer->getDeviceContext(), pointMesh->getIndexCount());
+
+	//// Send geometry data, set shader parameters, render object with shader
+	//plane->sendData(renderer->getDeviceContext());
+	//shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
+	//shadowShader->render(renderer->getDeviceContext(), plane->getIndexCount());
 
 	// RENDER THE RENDER TEXTURE SCENE
 	// Requires 2D rendering and an ortho mesh.
