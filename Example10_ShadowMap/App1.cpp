@@ -12,8 +12,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	//Initialise mesh objects
 	mesh = new PlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
-	plane = new TessPlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
-	pointMesh = new PointMesh(renderer->getDevice(), renderer->getDeviceContext());
+	pointList = new PointList(renderer->getDevice(), renderer->getDeviceContext());
 
 	//Initialise ortho mesh objects
 	orthoMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, screenHeight / 2.7);
@@ -190,6 +189,13 @@ bool App1::frame()
 
 bool App1::render()
 {
+	particleVelocity -= 0.05;
+
+	if (particleVelocity < -8)
+	{
+		particleVelocity = 0;
+	}
+
 	//Update GUI editable values
 	guiEdits();
 	// Perform depth pass
@@ -200,11 +206,6 @@ bool App1::render()
 	depthPass2();
 	//Perform fourth depth pass
 	depthPass3();
-
-	//blurScenePass();
-	//horizontalBlur();
-	//verticalBlur();
-
 	// Render scene
 	finalPass();
 
@@ -408,15 +409,13 @@ void App1::finalPass()
 
 	worldMatrix = renderer->getWorldMatrix();
 
-	// Send geometry data, set shader parameters, render object with shader
-	pointMesh->sendData(renderer->getDeviceContext());
-	rainShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), fogStart, fogEnd, camera, fogDisable);
-	rainShader->render(renderer->getDeviceContext(), pointMesh->getIndexCount());
+	//Translate floor
+	worldMatrix = XMMatrixTranslation(particleVelocity, particleVelocity, 0.0f);
 
-	//// Send geometry data, set shader parameters, render object with shader
-	//plane->sendData(renderer->getDeviceContext());
-	//shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
-	//shadowShader->render(renderer->getDeviceContext(), plane->getIndexCount());
+	// Send geometry data, set shader parameters, render object with shader
+	pointList->sendData(renderer->getDeviceContext());
+	rainShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, fogStart, fogEnd, camera, fogDisable, particleVelocity);
+	rainShader->render(renderer->getDeviceContext(), pointList->getIndexCount());
 
 	// RENDER THE RENDER TEXTURE SCENE
 	// Requires 2D rendering and an ortho mesh.
@@ -621,6 +620,7 @@ void App1::gui()
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe Mode: ", &wireframeToggle);
 	ImGui::Checkbox("Disable Fog: ", &fogDisable);
+	ImGui::SliderFloat("Snow Speed: ", &particleVelocity, 0.5, 3, 0, 1);
 
 	//Light 1 Stuff
 

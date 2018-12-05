@@ -8,7 +8,7 @@
 #include "ShadowShader.h"
 #include "DepthShader.h"
 #include "RainShader.h"
-#include "TessPlaneMesh.h"
+#include "PointList.h"
 
 class App1 : public BaseApplication
 {
@@ -85,13 +85,14 @@ private:
 
 	bool fogDisable;
 
+	float particleVelocity = 0.5f;
+
 	//Light Directions
 	XMFLOAT4 lightDir, light1Dir, light2Dir, light3Dir;
 
 	//Mesh objects
 	PlaneMesh* mesh;
-	TessPlaneMesh* plane;
-	PointMesh* pointMesh;
+	PointList* pointList;
 
 	//Ortho mesh objects
 	OrthoMesh* orthoMesh;

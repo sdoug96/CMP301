@@ -30,10 +30,10 @@
     <ClCompile Include="TextureShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TessPlaneMesh.cpp">
+    <ClCompile Include="RainShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RainShader.cpp">
+    <ClCompile Include="PointList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,10 +50,10 @@
     <ClInclude Include="TextureShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TessPlaneMesh.h">
+    <ClInclude Include="RainShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RainShader.h">
+    <ClInclude Include="PointList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

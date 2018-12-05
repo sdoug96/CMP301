@@ -5,6 +5,18 @@ cbuffer MatrixBuffer : register(b0)
 	matrix projectionMatrix;
 };
 
+//Positions of vertices around point will determine size of each particle
+cbuffer PositionBuffer
+{
+	static float3 g_positions[4] =
+	{
+	float3(-0.12, 0.12, 0),
+	float3(-0.12, -0.12, 0),
+	float3(0.12, 0.12, 0),
+	float3(0.12, -0.12, 0)
+	};
+};
+
 struct InputType
 {
 	float4 position : POSITION;
@@ -19,40 +31,21 @@ struct OutputType
 	float3 normal : NORMAL;
 };
 
-[maxvertexcount(3)]
+[maxvertexcount(4)]
 void main(point InputType input[1], inout TriangleStream<OutputType> triStream)
 {
 	OutputType output;
 
-	// Move the vertex away from the point position
-	output.position = input[0].position + float4(0.0, 1.0, 0.0, 0.0);
-	output.position = mul(output.position, worldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
-	output.tex = input[0].tex;
-	output.normal = mul(input[0].normal, (float3x3) worldMatrix);
-	output.normal = normalize(output.normal);
-	triStream.Append(output);
-
-	// Move the vertex away from the point position
-	output.position = input[0].position + float4(-1.0, 0.0, 0.0, 0.0);
-	output.position = mul(output.position, worldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
-	output.tex = input[0].tex;
-	output.normal = mul(input[0].normal, (float3x3) worldMatrix);
-	output.normal = normalize(output.normal);
-	triStream.Append(output);
-
-	// Move the vertex away from the point position
-	output.position = input[0].position + float4(1.0, 0.0, 0.0, 0.0);
-	output.position = mul(output.position, worldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
-	output.tex = input[0].tex;
-	output.normal = mul(input[0].normal, (float3x3) worldMatrix);
-	output.normal = normalize(output.normal);
-	triStream.Append(output);
+	for (int i = 0; i < 4; i++)
+	{
+		float4 vposition = float4(g_positions[i], 1.0f) + input[0].position;
+		output.position = mul(vposition, worldMatrix);
+		output.position = mul(output.position, viewMatrix);
+		output.position = mul(output.position, projectionMatrix);
+		output.tex = input[0].tex;
+		output.normal = input[0].normal;
+		triStream.Append(output);
+	}
 
 	triStream.RestartStrip();
 }
