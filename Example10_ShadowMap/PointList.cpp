@@ -21,12 +21,17 @@ void PointList::initBuffers(ID3D11Device* device)
 {
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
-	float particleDevX = 100.0f;
-	float particleDevY = 30.0f;
+	float particleDevX = 150.0f;
+	float particleDevY = 50.0f;
 	float particleDevZ = 100.0f;
+
+	float maxParticles = 10000.0f;
 
 	vertexCount = maxParticles;
 	indexCount = maxParticles;
+
+	VertexType_Colour* vertices = new VertexType_Colour[maxParticles];
+	unsigned long* indices = new unsigned long[maxParticles];
 
 	for (int i = 0; i < maxParticles; i++)
 	{
@@ -69,25 +74,4 @@ void PointList::sendData(ID3D11DeviceContext* deviceContext, D3D_PRIMITIVE_TOPOL
 	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 	deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->IASetPrimitiveTopology(top);
-}
-
-void PointList::update()
-{
-	float particleDevY = 30.0f;
-	float maxParticles = 5000.0f;
-
-	float particleVelocity = 0.05f;
-
-	for (int i = 0; i < maxParticles; i++)
-	{
-		vertices[i].position.y -= particleVelocity;
-	}
-
-	//for (int i = 0; i < maxParticles; i++)
-	//{
-	//	if (vertices[i].position.y < -10.0f)
-	//	{
-	//		vertices[i].position.y = (((float)rand() - (float)rand()) / RAND_MAX) * particleDevY;
-	//	}
-	//}
 }

@@ -24,8 +24,7 @@ public:
 		const XMMATRIX &projection,
 		float fogStart, float fogEnd,
 		Camera* cam, 
-		bool fogDisable,
-	    float particleVelocity
+		bool fogDisable
 	);
 
 	void render(ID3D11DeviceContext* deviceContext, int vertexCount);

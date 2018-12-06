@@ -105,7 +105,7 @@ void RainShader::initShader(WCHAR* vsFilename, WCHAR* gsFilename, WCHAR* psFilen
 }
 
 
-void RainShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, float fogStart, float fogEnd, Camera* cam, bool fogDisable, float particleVelocity)
+void RainShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, float fogStart, float fogEnd, Camera* cam, bool fogDisable)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;

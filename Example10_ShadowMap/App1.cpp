@@ -189,11 +189,14 @@ bool App1::frame()
 
 bool App1::render()
 {
-	particleVelocity -= 0.05;
+	//Reset snow if it goes off certain boundaries
+	initParticlePosX += particleVelocityX;
+	initParticlePosY -= particleVelocityY;
 
-	if (particleVelocity < -8)
+	if (initParticlePosY < -8)
 	{
-		particleVelocity = 0;
+		initParticlePosX = 0;
+		initParticlePosY = 0;
 	}
 
 	//Update GUI editable values
@@ -410,11 +413,11 @@ void App1::finalPass()
 	worldMatrix = renderer->getWorldMatrix();
 
 	//Translate floor
-	worldMatrix = XMMatrixTranslation(particleVelocity, particleVelocity, 0.0f);
+	worldMatrix = XMMatrixTranslation(initParticlePosX, initParticlePosY, 0.0f);
 
 	// Send geometry data, set shader parameters, render object with shader
 	pointList->sendData(renderer->getDeviceContext());
-	rainShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, fogStart, fogEnd, camera, fogDisable, particleVelocity);
+	rainShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, fogStart, fogEnd, camera, fogDisable);
 	rainShader->render(renderer->getDeviceContext(), pointList->getIndexCount());
 
 	// RENDER THE RENDER TEXTURE SCENE
@@ -620,7 +623,8 @@ void App1::gui()
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe Mode: ", &wireframeToggle);
 	ImGui::Checkbox("Disable Fog: ", &fogDisable);
-	ImGui::SliderFloat("Snow Speed: ", &particleVelocity, 0.5, 3, 0, 1);
+	ImGui::SliderFloat("Wind X Speed: ", &particleVelocityX, -0.2, 0.2, 0, 1);
+	ImGui::SliderFloat("Snow Fall Speed: ", &particleVelocityY, 0.0, 0.2, 0, 1);
 
 	//Light 1 Stuff
 

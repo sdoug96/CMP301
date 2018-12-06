@@ -85,7 +85,11 @@ private:
 
 	bool fogDisable;
 
-	float particleVelocity = 0.5f;
+	float initParticlePosX = 0.0f;
+	float initParticlePosY = 0.0f;
+
+	float particleVelocityX = 0.05;
+	float particleVelocityY = 0.05;
 
 	//Light Directions
 	XMFLOAT4 lightDir, light1Dir, light2Dir, light3Dir;
