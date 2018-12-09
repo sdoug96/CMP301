@@ -20,11 +20,12 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	orthoMesh2 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, -screenWidth / 2.7, -screenHeight / 2.7);
 	orthoMesh3 = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth / 4, screenHeight / 4, screenWidth / 2.7, -screenHeight / 2.7);
 
+	//Initialise models
 	tree = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/tree.obj");
-	house = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/house.obj");
-	campfire = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/campfire.obj");
+	cabin = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/house.obj");
+	stump = new Model(renderer->getDevice(), renderer->getDeviceContext(), "res/campfire.obj");
 
-	//Load textures
+	//Initialise textures
 	textureMgr->loadTexture("heightMap", L"res/heightMap.png");
 	textureMgr->loadTexture("rock", L"res/rock.png");
 	textureMgr->loadTexture("snow", L"res/snow.jpg");
@@ -49,6 +50,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	shadowMap2 = new RenderTexture(renderer->getDevice(), shadowmapWidth, shadowmapHeight, 0.1f, 100.f);
 	shadowMap3 = new RenderTexture(renderer->getDevice(), shadowmapWidth, shadowmapHeight, 0.1f, 100.f);
 
+	//Initialise lights
 	lightsInit();
 }
 
@@ -121,6 +123,7 @@ void App1::guiEdits()
 	light3->setPosition(light3XPos, light3YPos, light3ZPos);
 	light3->setDirection(light3XDir, light3YDir, light3ZDir);
 
+	//If lights are set to off, set to black, if not, set to regular colour
 	if (lightoff)
 	{
 		light->setAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
@@ -232,22 +235,22 @@ void App1::depthPass()
 	//Translate floor
 	worldMatrix = XMMatrixTranslation(-50.f, -20.f, -10.f);
 
-	//Render floor
+	//Floor depth pass 1
 	mesh->sendData(renderer->getDeviceContext());
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
-	//TEAPOT
+	//TREE
 
-	teapotDepthPass(lightViewMatrix, lightProjectionMatrix);
+	treeDepthPass(lightViewMatrix, lightProjectionMatrix);
 
-	//CUBE
+	//CABIN
 
-	cubeDepthPass(lightViewMatrix, lightProjectionMatrix);
+	cabinDepthPass(lightViewMatrix, lightProjectionMatrix);
 
-	//CAMPFIRE
+	//STUMP
 
-	campfireDepthPass(lightViewMatrix, lightProjectionMatrix);
+	stumpDepthPass(lightViewMatrix, lightProjectionMatrix);
 
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
@@ -271,22 +274,22 @@ void App1::depthPass1()
 	//Translate floor
 	worldMatrix = XMMatrixTranslation(-50.f, -20.f, -10.f);
 
-	// Render floor
+	//Floor depth pass 2
 	mesh->sendData(renderer->getDeviceContext());
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix1, lightProjectionMatrix1);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
-	//TEAPOT
+	//TREE
 
-	teapotDepthPass(lightViewMatrix1, lightProjectionMatrix1);
+	treeDepthPass(lightViewMatrix1, lightProjectionMatrix1);
 
-	//CUBE
+	//CABIN
 
-	cubeDepthPass(lightViewMatrix1, lightProjectionMatrix1);
+	cabinDepthPass(lightViewMatrix1, lightProjectionMatrix1);
 
-	//CAMPFIRE
+	//STUMP
 
-	campfireDepthPass(lightViewMatrix1, lightProjectionMatrix1);
+	stumpDepthPass(lightViewMatrix1, lightProjectionMatrix1);
 
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
@@ -310,22 +313,22 @@ void App1::depthPass2()
 	//Translate floor
 	worldMatrix = XMMatrixTranslation(-50.f, -20.f, -10.f);
 
-	//Render floor
+	//Floor depth pass 1
 	mesh->sendData(renderer->getDeviceContext());
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix2, lightProjectionMatrix2);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
-	//TEAPOT
+	//TREE
 
-	teapotDepthPass(lightViewMatrix2, lightProjectionMatrix2);
+	treeDepthPass(lightViewMatrix2, lightProjectionMatrix2);
 
-	//CUBE
+	//CABIN
 
-	cubeDepthPass(lightViewMatrix2, lightProjectionMatrix2);
+	cabinDepthPass(lightViewMatrix2, lightProjectionMatrix2);
 
-	//CAMPFIRE
+	//STUMP
 
-	campfireDepthPass(lightViewMatrix2, lightProjectionMatrix2);
+	stumpDepthPass(lightViewMatrix2, lightProjectionMatrix2);
 
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
@@ -349,22 +352,22 @@ void App1::depthPass3()
 	//Translate floor
 	worldMatrix = XMMatrixTranslation(-50.f, -20.f, -10.f);
 
-	//Render floor
+	//Floor depth pass 1
 	mesh->sendData(renderer->getDeviceContext());
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix3, lightProjectionMatrix3);
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
-	//TEAPOT
+	//TREE
 
-	teapotDepthPass(lightViewMatrix3, lightProjectionMatrix3);
+	treeDepthPass(lightViewMatrix3, lightProjectionMatrix3);
 
-	//CUBE
+	//CABIN
 
-	cubeDepthPass(lightViewMatrix3, lightProjectionMatrix3);
+	cabinDepthPass(lightViewMatrix3, lightProjectionMatrix3);
 
-	//CAMPFIRE
+	//STUMP
 
-	campfireDepthPass(lightViewMatrix3, lightProjectionMatrix3);
+	stumpDepthPass(lightViewMatrix3, lightProjectionMatrix3);
 
 	// Set back buffer as render target and reset view port.
 	renderer->setBackBufferRenderTarget();
@@ -398,27 +401,33 @@ void App1::finalPass()
 	XMMATRIX scaleMatrix = XMMatrixScaling(50.0f, 50.0f, 50.0f);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
-	//TEAPOT
+	//TREE
 
-	teapotFinalPass(viewMatrix, projectionMatrix);
+	treeFinalPass(viewMatrix, projectionMatrix);
 
-	//CUBE
+	//CABIN
 
-	cubeFinalPass(viewMatrix, projectionMatrix);
+	cabinFinalPass(viewMatrix, projectionMatrix);
 
-	//CAMPFIRE
+	//STUMP
 
-	campfireFinalPass(viewMatrix, projectionMatrix);
+	stumpFinalPass(viewMatrix, projectionMatrix);
+
+	//SNOW
 
 	worldMatrix = renderer->getWorldMatrix();
 
-	//Translate floor
+	//Translate snow
 	worldMatrix = XMMatrixTranslation(initParticlePosX, initParticlePosY, 0.0f);
 
-	// Send geometry data, set shader parameters, render object with shader
-	pointList->sendData(renderer->getDeviceContext());
-	rainShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, fogStart, fogEnd, camera, fogDisable);
-	rainShader->render(renderer->getDeviceContext(), pointList->getIndexCount());
+	if (!snowDisable)
+	{
+		//Render snow
+		pointList->sendData(renderer->getDeviceContext());
+		rainShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, fogStart, fogEnd, camera, fogDisable);
+		rainShader->render(renderer->getDeviceContext(), pointList->getIndexCount());
+	}
+
 
 	// RENDER THE RENDER TEXTURE SCENE
 	// Requires 2D rendering and an ortho mesh.
@@ -428,6 +437,7 @@ void App1::finalPass()
 	XMMATRIX orthoMatrix = renderer->getOrthoMatrix();  // ortho matrix for 2D rendering
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
+	//Shadow maps
 	if (drawShadowMap)
 	{
 		orthoMesh->sendData(renderer->getDeviceContext());
@@ -463,82 +473,7 @@ void App1::finalPass()
 	renderer->endScene();
 }
 
-void App1::teapotDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix)
-{
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-
-	//TEAPOT
-
-	worldMatrix = renderer->getWorldMatrix();
-
-	//Translate teapot
-	worldMatrix = XMMatrixTranslation(modelXPos, modelYPos, modelZPos);
-
-	//Rotate teapot
-	//XMMATRIX rotateMatrix = XMMatrixRotationY(rotation);
-	//worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
-
-	//Scale teapot
-	XMMATRIX scaleMatrix = XMMatrixScaling(0.045, 0.045, 0.045);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
-
-	// Render tree
-	tree->sendData(renderer->getDeviceContext());
-	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	depthShader->render(renderer->getDeviceContext(), tree->getIndexCount());
-}
-
-void App1::cubeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix)
-{
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-
-	//CUBE
-
-	worldMatrix = renderer->getWorldMatrix();
-
-	//Translate cube
-	worldMatrix = XMMatrixTranslation(cubeXPos, cubeYPos, cubeZPos);
-
-	//Rotate cube
-	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
-	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
-
-	//Scale cube
-	XMMATRIX scaleMatrix = XMMatrixScaling(0.2, 0.2, 0.2);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
-
-	// Render cube
-	house->sendData(renderer->getDeviceContext());
-	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	depthShader->render(renderer->getDeviceContext(), house->getIndexCount());
-}
-
-void App1::campfireDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix)
-{
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-
-	//CUBE
-
-	worldMatrix = renderer->getWorldMatrix();
-
-	//Translate cube
-	worldMatrix = XMMatrixTranslation(fireXPos, fireYPos, fireZPos);
-
-	//Rotate cube
-	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
-	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
-
-	//Scale cube
-	XMMATRIX scaleMatrix = XMMatrixScaling(1.0f, 1.0f, 1.0f);
-	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
-
-	//Render cube
-	campfire->sendData(renderer->getDeviceContext());
-	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	depthShader->render(renderer->getDeviceContext(), campfire->getIndexCount());
-}
-
-void App1::teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+void App1::treeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix)
 {
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 
@@ -549,67 +484,135 @@ void App1::teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 	//Translate tree
 	worldMatrix = XMMatrixTranslation(modelXPos, modelYPos, modelZPos);
 
-	//Rotate tree
-	//XMMATRIX rotateMatrix = XMMatrixRotationY(rotation);
-	//worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
+	//Scale tree
+	XMMATRIX scaleMatrix = XMMatrixScaling(0.045, 0.045, 0.045);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
+
+	//Render tree
+	tree->sendData(renderer->getDeviceContext());
+	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	depthShader->render(renderer->getDeviceContext(), tree->getIndexCount());
+}
+
+void App1::cabinDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix)
+{
+	XMMATRIX worldMatrix = renderer->getWorldMatrix();
+
+	//CABIN
+
+	worldMatrix = renderer->getWorldMatrix();
+
+	//Translate cabin
+	worldMatrix = XMMatrixTranslation(cubeXPos, cubeYPos, cubeZPos);
+
+	//Rotate cabin
+	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
+	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
+
+	//Scale cabin
+	XMMATRIX scaleMatrix = XMMatrixScaling(0.2, 0.2, 0.2);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
+
+	//Render cabin
+	cabin->sendData(renderer->getDeviceContext());
+	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	depthShader->render(renderer->getDeviceContext(), cabin->getIndexCount());
+}
+
+void App1::stumpDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix)
+{
+	XMMATRIX worldMatrix = renderer->getWorldMatrix();
+
+	//STUMP
+
+	worldMatrix = renderer->getWorldMatrix();
+
+	//Translate stump
+	worldMatrix = XMMatrixTranslation(fireXPos, fireYPos, fireZPos);
+
+	//Rotate stump
+	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
+	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
+
+	//Scale stump
+	XMMATRIX scaleMatrix = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
+
+	//Render stump
+	stump->sendData(renderer->getDeviceContext());
+	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	depthShader->render(renderer->getDeviceContext(), stump->getIndexCount());
+}
+
+void App1::treeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+{
+	XMMATRIX worldMatrix = renderer->getWorldMatrix();
+
+	//TREE
+
+	worldMatrix = renderer->getWorldMatrix();
+
+	//Translate tree
+	worldMatrix = XMMatrixTranslation(modelXPos, modelYPos, modelZPos);
 
 	//Scale tree
 	XMMATRIX scaleMatrix = XMMatrixScaling(0.045, 0.045, 0.045);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
+	//Render tree
 	tree->sendData(renderer->getDeviceContext());
 	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
 	shadowShader->render(renderer->getDeviceContext(), tree->getIndexCount());
 }
 
-void App1::cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+void App1::cabinFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 {
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 
-	//CUBE
+	//CABIN
 
 	worldMatrix = renderer->getWorldMatrix();
 
-	//Translate cube
+	//Translate cabin
 	worldMatrix = XMMatrixTranslation(cubeXPos, cubeYPos, cubeZPos);
 
-	//Rotate cube
+	//Rotate cabin
 	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
 	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
 
-	//Scale cube
+	//Scale cabin
 	XMMATRIX scaleMatrix = XMMatrixScaling(0.2, 0.2, 0.2);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
-	//Render cube
-	house->sendData(renderer->getDeviceContext());
+	//Render cabin
+	cabin->sendData(renderer->getDeviceContext());
 	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("house"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
-	shadowShader->render(renderer->getDeviceContext(), house->getIndexCount());
+	shadowShader->render(renderer->getDeviceContext(), cabin->getIndexCount());
 }
 
-void App1::campfireFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+void App1::stumpFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 {
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 
-	//CUBE
+	//STUMP
 
 	worldMatrix = renderer->getWorldMatrix();
 
-	//Translate cube
+	//Translate stump
 	worldMatrix = XMMatrixTranslation(fireXPos, fireYPos, fireZPos);
 
-	//Rotate cube
+	//Rotate stump
 	XMMATRIX rotateMatrix = XMMatrixRotationY(-90);
 	worldMatrix = XMMatrixMultiply(rotateMatrix, worldMatrix);
 
-	//Scale cube
+	//Scale stump
 	XMMATRIX scaleMatrix = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
-	//Render cube
-	campfire->sendData(renderer->getDeviceContext());
+	//Render stump
+	stump->sendData(renderer->getDeviceContext());
 	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture("bark"), NULL, shadowMap->getShaderResourceView(), shadowMap1->getShaderResourceView(), shadowMap2->getShaderResourceView(), shadowMap3->getShaderResourceView(), light, light1, light2, light3, lightDir, light1Dir, light2Dir, light3Dir, fogStart, fogEnd, camera, fogDisable);
-	shadowShader->render(renderer->getDeviceContext(), campfire->getIndexCount());
+	shadowShader->render(renderer->getDeviceContext(), stump->getIndexCount());
 }
 
 void App1::gui()
@@ -621,8 +624,11 @@ void App1::gui()
 
 	// Build UI
 	ImGui::Text("FPS: %.2f", timer->getFPS());
+
 	ImGui::Checkbox("Wireframe Mode: ", &wireframeToggle);
 	ImGui::Checkbox("Disable Fog: ", &fogDisable);
+	ImGui::Checkbox("Disable Snow", &snowDisable);
+
 	ImGui::SliderFloat("Wind X Speed: ", &particleVelocityX, -0.2, 0.2, 0, 1);
 	ImGui::SliderFloat("Snow Fall Speed: ", &particleVelocityY, 0.0, 0.2, 0, 1);
 

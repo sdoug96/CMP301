@@ -10,10 +10,15 @@ cbuffer PositionBuffer
 {
 	static float3 g_positions[4] =
 	{
-	float3(-0.12, 0.12, 0),
-	float3(-0.12, -0.12, 0),
-	float3(0.12, 0.12, 0),
-	float3(0.12, -0.12, 0)
+	//Quad 1
+	//Top left
+	float3(-0.12, 0.12, -0.12),
+	//Bottom left
+	float3(-0.12, -0.12, -0.12),
+	//Top right
+	float3(0.12, 0.12, -0.12),
+	//Bottom right
+	float3(0.12, -0.12, -0.12),
 	};
 };
 
@@ -46,6 +51,5 @@ void main(point InputType input[1], inout TriangleStream<OutputType> triStream)
 		output.normal = input[0].normal;
 		triStream.Append(output);
 	}
-
 	triStream.RestartStrip();
 }

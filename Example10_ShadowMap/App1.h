@@ -38,13 +38,13 @@ protected:
 
 	void gui();
 
-	void teapotDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
-	void cubeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
-	void campfireDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
+	void treeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
+	void cabinDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
+	void stumpDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 
-	void teapotFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
-	void cubeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
-	void campfireFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
+	void treeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
+	void cabinFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
+	void stumpFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
 	float fogColour = 0.9f;
 
@@ -55,7 +55,7 @@ protected:
 
 private:
 
-	//GUI editbale mesh and model positions
+	//Positions for models
 	float cubeXPos = -71, cubeYPos = -99, cubeZPos = 99;
 
 	float modelXPos = -20, modelYPos = -380, modelZPos = 5;
@@ -83,7 +83,7 @@ private:
 	float lightHeightDownLimit = 0;
 	float lightHeightUpLimit = 20;
 
-	bool fogDisable;
+	bool fogDisable, snowDisable;
 
 	float initParticlePosX = 0.0f;
 	float initParticlePosY = 0.0f;
@@ -106,8 +106,8 @@ private:
 
 	//Models
 	Model* tree;
-	Model* house;
-	Model* campfire;
+	Model* cabin;
+	Model* stump;
 
 	//Lights
 	Light* light;

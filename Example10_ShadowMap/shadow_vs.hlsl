@@ -56,9 +56,10 @@ OutputType main(InputType input)
 {
     OutputType output;
 
+	//Offset which determines height generated on height map
 	float4 offset = heightMap.SampleLevel(sampler0, input.tex, 0);
 
-	//offset position based on sine wave
+	//offset position based on calculated height map offset value
 	input.position.y += offset.y * 10;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.

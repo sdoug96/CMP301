@@ -21,18 +21,23 @@ void PointList::initBuffers(ID3D11Device* device)
 {
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
+	//Particle deviations to scatter points around plane
 	float particleDevX = 150.0f;
 	float particleDevY = 50.0f;
 	float particleDevZ = 100.0f;
 
+	//Maximum amount of particles created in the scene
 	float maxParticles = 10000.0f;
 
+	//Initialise vertex and index counts
 	vertexCount = maxParticles;
 	indexCount = maxParticles;
 
+	//Store vertices and indices
 	VertexType_Colour* vertices = new VertexType_Colour[maxParticles];
 	unsigned long* indices = new unsigned long[maxParticles];
 
+	//Scatter points around terrain with random positions
 	for (int i = 0; i < maxParticles; i++)
 	{
 		vertices[i].position.x = (((float)rand() - (float)rand()) / RAND_MAX) * particleDevX;
@@ -46,10 +51,12 @@ void PointList::initBuffers(ID3D11Device* device)
 		indices[i] = i;
 	}
 
+	//Create vertex buffer
 	D3D11_BUFFER_DESC vertexBufferDesc = { sizeof(VertexType_Colour) * vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0 };
 	vertexData = { vertices, 0 , 0 };
 	device->CreateBuffer(&vertexBufferDesc, &vertexData, &vertexBuffer);
 
+	//Create index buffer
 	D3D11_BUFFER_DESC indexBufferDesc = { sizeof(unsigned long) * indexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, 0 };
 	indexData = { indices, 0, 0 };
 	device->CreateBuffer(&indexBufferDesc, &indexData, &indexBuffer);
