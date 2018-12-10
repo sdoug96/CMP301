@@ -1,6 +1,7 @@
 Texture2D heightMap : register(t0);
 SamplerState sampler0 : register(s0);
 
+//Matrix buffer
 cbuffer MatrixBuffer : register(b0)
 {
 	matrix worldMatrix;

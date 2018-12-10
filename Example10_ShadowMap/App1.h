@@ -29,6 +29,7 @@ protected:
 
 	bool render();
 
+	//Depth passes
 	void depthPass();
 	void depthPass1();
 	void depthPass2();
@@ -38,16 +39,18 @@ protected:
 
 	void gui();
 
+	//Model depth passes
 	void treeDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 	void cabinDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 	void stumpDepthPass(XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix);
 
+	//Model final passes
 	void treeFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 	void cabinFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 	void stumpFinalPass(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
+	//Fog values
 	float fogColour = 0.9f;
-
 	float fogStart = 15.0f;
 	float fogEnd = 100.0f;
 
@@ -85,9 +88,11 @@ private:
 
 	bool fogDisable, snowDisable;
 
+	//Initial particle positions
 	float initParticlePosX = 0.0f;
 	float initParticlePosY = 0.0f;
 
+	//Particle speeds
 	float particleVelocityX = 0.05;
 	float particleVelocityY = 0.05;
 

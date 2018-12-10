@@ -37,7 +37,7 @@ void PointList::initBuffers(ID3D11Device* device)
 	VertexType_Colour* vertices = new VertexType_Colour[maxParticles];
 	unsigned long* indices = new unsigned long[maxParticles];
 
-	//Scatter points around terrain with random positions
+	//Scatter points around terrain with random positions based on deviations
 	for (int i = 0; i < maxParticles; i++)
 	{
 		vertices[i].position.x = (((float)rand() - (float)rand()) / RAND_MAX) * particleDevX;
